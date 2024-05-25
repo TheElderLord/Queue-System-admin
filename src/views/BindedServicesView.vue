@@ -5,6 +5,7 @@ import { fetchRoleServices } from "../utils/role-services.utils";
 
 const search = ref("" as string);
 const headers = ref([
+    { key: "id", title: "ID", align: "center", },
     { key: "serviceName", title: "Название", align: "center", },
     { key: "branchName", title: "Описание", align: "center" },
     { key: "roleName", title: "Родитель", align: "center" },
@@ -40,6 +41,9 @@ onMounted(() => {
                 <v-data-table :headers="headers" :items="desserts" :search="search">
                     <template v-slot:item="{ item }">
                         <tr>
+                            <td>
+                                {{ item.id }}
+                            </td>
                             <td>
                                 {{ item.serviceName }}
                             </td>

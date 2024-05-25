@@ -5,7 +5,8 @@ import { onMounted, ref } from "vue"
 
 const search = ref("" as string);
 const headers = ref([
-    { key: "name", title: "Назвиние", align: "center", },
+    { key: "id", title: "ID", align: "center", },
+    { key: "name", title: "Название", align: "center", },
     { key: "description", title: "Описание", align: "center" },
     { key: "priority", title: "Приоритет", align: "center" },
     { key: "action", title: "Действие", align: "center" },
@@ -39,6 +40,9 @@ onMounted(() => {
                 <v-data-table :headers="headers" :items="desserts" :search="search">
                     <template v-slot:item="{ item }">
                         <tr>
+                            <td>
+                                {{ item.id }}
+                            </td>
 
                             <td>
                                 {{ item.name }}
