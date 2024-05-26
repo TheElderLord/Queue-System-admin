@@ -39,12 +39,14 @@ const formattedDesserts = computed(() => {
         serviceEndTime: ticket.serviceEndTime
             ? new Date(ticket.serviceEndTime).toLocaleString('ru-RU')
             : null,
-        status: ticket.status === 'ONLINE' ? 'В сети' : 'Оффлайн',
         isDirected: ticket.directed ? 'Да' : 'Нет',
     }));
 });
 onMounted(() => {
     getRoles()
+    setInterval(() => {
+        getRoles();
+    }, 3000)
 })
 </script>
 <template>

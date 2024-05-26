@@ -1,6 +1,6 @@
-export interface RoleModel{
-    id:number,
-    name:string,
-    description:string,
-    priority:string
+export interface RoleModel {
+    id: number,
+    name: string,
+    description: string,
+    priority: number
 }

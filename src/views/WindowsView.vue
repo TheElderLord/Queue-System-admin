@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import type { Window } from "../models/windows/windows.interface"
-import { onMounted, ref } from "vue"
-import { fetchWindows } from "../utils/windows.utils";
+import { onMounted, ref, watch } from "vue"
+import { fetchWindows, postWindow, putWindow, removeWindow } from "../utils/windows.utils";
+import type { Branch } from "@/models/branches/branches.interface";
+import { fetchBranches } from "@/utils/branches.utils";
 
 const search = ref("" as string);
 const headers = ref([
@@ -11,28 +13,152 @@ const headers = ref([
     { key: "branchName", title: "Отделение", align: "center" },
     { key: "description", title: "Описание", align: "center" },
     { key: "active", title: "Активен", align: "center" },
-    { key: "action", title: "Действие", align: "center" },
+    { key: "action", title: "Изменить", align: "center" },
+    { key: "action", title: "Удалить", align: "center" },
 
 
 ]);
 const desserts = ref([] as Window[]);
+const branches = ref([] as Branch[]);
 
+const isCreateActive = ref<boolean>(false);
+const isUpdateActive = ref<boolean>(false);
 
-const getRoles = async () => {
+const WindowObject = ref<Window>({
+    id: 0,
+    branchId: 0,
+    branchName: "",
+    number: 0,
+    name: "",
+    description: "",
+    active: false,
+});
+
+const getBranches = async () => {
+    branches.value = await fetchBranches();
+}
+const getWindows = async () => {
     desserts.value = await fetchWindows();
     // console.log(desserts.value)
+}
+const createWindow = async () => {
+    // console.log(branchObject.value);
+    await postWindow(WindowObject.value);
+    getWindows();
+    isCreateActive.value = false;
+    resetWindowObject();
+}
+const show = async (id: number) => {
+    const selectedWindow = desserts.value.find(e => e.id === id);
+    // Check if the selected branch is defined
+    if (selectedWindow) {
+        // Assign the found branch to branchObject
+        WindowObject.value = { ...selectedWindow };
+        WindowObject.value.id = id;
+        isCreateActive.value = true;
+        isUpdateActive.value = true;
+    } else {
+        console.error(`Window with id ${id} not found.`);
+        // Handle the case where the branch is not found, e.g., by showing a notification or error message
+    }
+}
+const close = () => {
+    isCreateActive.value = false;
+    isUpdateActive.value = false;
+}
+const updateWindow = async () => {
+    console.log(WindowObject.value);
+    await putWindow(WindowObject.value.id, WindowObject.value);
+    await getWindows();
+    resetWindowObject();
+    isCreateActive.value = false;
+    isUpdateActive.value = false;
+    // console.log(branchObject.value);
 
 }
+const deleteWindow = async (id: number) => {
+    await removeWindow(id);
+    await getWindows();
+}
+const resetWindowObject = () => {
+    WindowObject.value = {
+        id: 0,
+        branchId: 0,
+        branchName: "",
+        number: 0,
+        name: "",
+        description: "",
+        active: false,
+    };
+}
+watch(isCreateActive, (newValue) => {
+    if (!newValue) {
+        resetWindowObject();
+    }
+});
 onMounted(() => {
-    getRoles()
+    getWindows()
+    getBranches()
+    setInterval(() => {
+        getWindows()
+        getBranches();
+    }, 3000)
 })
 </script>
 <template>
 
-    <div class="role-container">
-        <div class="role-title text-3xl text-center">Окна</div>
-        <div class="role-body w-full">
+    <div class="Window-container">
+        <div class="Window-title text-3xl text-center">Окна</div>
+        <div class="Window-body w-full">
+            <div class="createDiv">
+                <v-dialog v-model="isCreateActive" max-width="500">
+                    <template v-slot:activator="{ props: activatorProps }">
+                        <v-btn v-bind="activatorProps" color="surface-variant" text="Создать" variant="flat"></v-btn>
+                    </template>
 
+                    <template v-slot:default>
+                        <v-card title="Изменение">
+                            <v-card-text>
+                                <form>
+                                    <div class="form-floating mb-3">
+                                        <input v-model="WindowObject.name" type="text" class="form-control"
+                                            id="floatingInput" placeholder="name@example.com" />
+                                        <label for="floatingInput">Название</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input v-model="WindowObject.number" type="text" class="form-control"
+                                            id="floatingPassword" placeholder="Password" />
+                                        <label for="floatingPassword">Номер</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input v-model="WindowObject.description" type="text" class="form-control"
+                                            id="floatingPassword" placeholder="Password" />
+                                        <label for="floatingPassword">Описание</label>
+                                    </div>
+
+                                    <div class="form-floating mb-3">
+                                        <select v-model="WindowObject.branchId" class="form-select"
+                                            aria-label="Default select example">
+                                            <option value="0" selected>Выберите Отделение</option>
+                                            <option :value="branch.id" v-for="branch in branches" :key="branch.id">
+                                                {{ branch.name }}
+                                            </option>
+                                        </select>
+                                    </div>
+
+                                </form>
+                            </v-card-text>
+
+                            <v-card-actions>
+                                <v-spacer></v-spacer>
+                                <v-btn v-if="isUpdateActive" @click="updateWindow()" text="Изменить"></v-btn>
+                                <v-btn v-else @click="createWindow()" text="Сохранить"></v-btn>
+                                <v-btn text="Закрыть" @click="close()"></v-btn>
+                            </v-card-actions>
+                        </v-card>
+                    </template>
+                </v-dialog>
+            </div>
             <v-card v-if="desserts" flat title="">
 
                 <template v-slot:text>
@@ -59,11 +185,15 @@ onMounted(() => {
                                 {{ item.description }}
                             </td>
                             <td>
-                                {{ item.active }}
+                                <i v-if="item.active" class="fas fa-circle text-green-500"></i>
+                                <i v-else class="fas fa-circle text-red-500"></i>
+                            </td>
+                            <td>
+                                <v-btn class="w-24" fab dark small color="green" @click="show(item.id)">Изменить</v-btn>
                             </td>
                             <td>
                                 <v-btn class="w-24" fab dark small color="red"
-                                    @click="deleteUserFun(item.id)">Удалить</v-btn>
+                                    @click="deleteWindow(item.id)">Удалить</v-btn>
                             </td>
 
                         </tr>

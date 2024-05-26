@@ -14,6 +14,7 @@ const headers = ref([
     { key: "status", title: "Статус", align: "center" },
     { key: "startTime", title: "Начало", align: "center" },
     { key: "endTime", title: "Конец", align: "center" },
+    { key: "working-time", title: "Время", align: "center" },
     { key: "active", title: "Активен", align: "center" },
     { key: "action", title: "Действие", align: "center" },
 
@@ -26,12 +27,31 @@ const getRoles = async () => {
     desserts.value = await fetchSessions();
     // console.log(desserts.value)
 }
+const formatTimeDifference = (startTime: string, endTime: string | null) => {
+    const start = new Date(startTime);
+    const end = endTime ? new Date(endTime) : new Date();
+    const diffMs = end.getTime() - start.getTime();
+
+    if (diffMs < 0) {
+        return "00:00:00"; // This means the start time is in the future relative to the end time (should not happen)
+    }
+
+    const diffHrs = Math.floor(diffMs / (1000 * 60 * 60));
+    const diffMins = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+    const diffSecs = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+    return `${String(diffHrs).padStart(2, '0')}:${String(diffMins).padStart(2, '0')}:${String(diffSecs).padStart(2, '0')}`;
+}
+
+
 const formattedDesserts = computed(() => {
     return desserts.value.map(ticket => {
+        const workingTime = formatTimeDifference(ticket.startTime, ticket.endTime);
         return {
             ...ticket,
             startTime: new Date(ticket.startTime).toLocaleString("ru-RU"),
             endTime: ticket.endTime ? new Date(ticket.endTime).toLocaleString("ru-RU") : null,
+            workingTime: workingTime,
             status: ticket.status === "ONNLINE" ? "В сети" : "Оффлайн",
             active: ticket.active === true ? "Да" : "Нет"
         };
@@ -42,6 +62,14 @@ const formattedDesserts = computed(() => {
 });
 onMounted(() => {
     getRoles()
+    setInterval(() => {
+        desserts.value = [...desserts.value]; // Trigger reactivity for computed property
+    }, 1000);
+
+    setInterval(() => {
+        getRoles()
+    }, 3000)
+
 })
 </script>
 <template>
@@ -85,7 +113,11 @@ onMounted(() => {
                                 {{ item.endTime }}
                             </td>
                             <td>
-                                {{ item.active }}
+                                {{ item.workingTime }}
+                            </td>
+                            <td>
+                                <i v-if="item.active" class="fas fa-circle text-green-500"></i>
+                                <i v-else class="fas fa-circle text-red-500"></i>
                             </td>
                             <td>
                                 <v-btn class="w-24" fab dark small color="red"
