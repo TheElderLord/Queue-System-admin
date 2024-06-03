@@ -75,7 +75,7 @@ const resetBranchObject = () => {
         id: 0,
         name: "",
         description: "",
-        parentId: 0,
+        parentId: null,
         parentName: ""
     };
 }

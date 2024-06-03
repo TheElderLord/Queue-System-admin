@@ -9,6 +9,8 @@ const headers = ref([
     { key: "name", title: "Название", align: "center", },
     { key: "description", title: "Описание", align: "center" },
     { key: "parentName", title: "Родитель", align: "center" },
+    { key: "maxWaitTime", title: "Максимальное время ожидания", align: "center" },
+    { key: "maxServTime", title: "Максимальное время обслуживания", align: "center" },
     { key: "priority", title: "Приоритет", align: "center" },
     { key: "action", title: "Изменить", align: "center" },
     { key: "action", title: "Действие", align: "center" },
@@ -26,12 +28,14 @@ const serviceObject = ref<Service>({
     parentName: "",
     priority: 0,
     parentId: null,
+    maxServTime:null,
+    maxWaitTime:null
 });
 
 
 const getServices = async () => {
     desserts.value = await fetchServices();
-    // console.log(desserts.value)
+    console.log(desserts.value)
 }
 const createService = async () => {
     // console.log(branchObject.value);
@@ -79,7 +83,9 @@ const resetServiceObject = () => {
         description: "",
         parentName: "",
         priority: 0,
-        parentId: 0,
+        parentId: null,
+        maxServTime:null,
+        maxWaitTime:null
     };
 }
 watch(isCreateActive, (newValue) => {
@@ -129,6 +135,16 @@ onMounted(() => {
                                         </select>
                                     </div>
                                     <div class="form-floating mb-3">
+                                        <input v-model="serviceObject.maxServTime" type="text" class="form-control"
+                                            id="floatingPassword" placeholder="Password" />
+                                        <label for="floatingPassword">Максимальное время обслуживания</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
+                                        <input v-model="serviceObject.maxWaitTime" type="text" class="form-control"
+                                            id="floatingPassword" placeholder="Password" />
+                                        <label for="floatingPassword">Максимальное время ожидания</label>
+                                    </div>
+                                    <div class="form-floating mb-3">
                                         <input v-model="serviceObject.priority" type="text" class="form-control"
                                             id="floatingPassword" placeholder="Password" />
                                         <label for="floatingPassword">Приоритет</label>
@@ -168,6 +184,12 @@ onMounted(() => {
                             </td>
                             <td>
                                 {{ item.parentName }}
+                            </td>
+                            <td>
+                                {{ item.maxWaitTime }}
+                            </td>
+                            <td>
+                                {{ item.maxServTime }}
                             </td>
                             <td>
                                 {{ item.priority }}
