@@ -14,7 +14,7 @@ const branchObject = ref<Branch>({
     id: 0, // Initialize with default values
     name: "",
     description: "",
-    parentId: 0,
+    parentId: null,
     parentName: ""
 });
 

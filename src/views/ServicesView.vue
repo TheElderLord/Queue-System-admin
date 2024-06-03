@@ -25,7 +25,7 @@ const serviceObject = ref<Service>({
     description: "",
     parentName: "",
     priority: 0,
-    parentId: 0,
+    parentId: null,
 });
 
 
