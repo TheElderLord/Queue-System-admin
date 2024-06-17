@@ -202,7 +202,7 @@ onMounted(() => {
 
                 <v-data-table  :headers="headers"
                     items-per-page-text="Элементов на странице"
-                    :items="formattedDesserts"
+                    :items="desserts"
                     :search="search"
                     no-data-text="Данные отсутствуют">
                     <template v-slot:item="{ item }">
