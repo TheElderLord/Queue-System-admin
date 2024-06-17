@@ -3,7 +3,6 @@ import type { Ticket } from "../models/tickets/tickets.interface"
 import { onMounted, ref, computed } from "vue"
 import { fetchTickets } from "../utils/tickets.utils";
 
-
 const search = ref("" as string);
 const headers = ref([
 
@@ -26,11 +25,10 @@ const headers = ref([
 ]);
 const desserts = ref([] as Ticket[]);
 
-
 const getRoles = async () => {
     desserts.value = await fetchTickets();
-    // console.log(desserts.value)
 }
+
 const formattedDesserts = computed(() => {
     return desserts.value.map((ticket) => ({
         ...ticket,
@@ -42,6 +40,7 @@ const formattedDesserts = computed(() => {
         isDirected: ticket.directed ? 'Да' : 'Нет',
     }));
 });
+
 onMounted(() => {
     getRoles()
     setInterval(() => {
@@ -49,20 +48,24 @@ onMounted(() => {
     }, 3000)
 })
 </script>
-<template>
 
+<template>
     <div class="role-container">
         <div class="role-title text-3xl text-center">Билеты</div>
         <div class="role-body w-full">
-
             <v-card v-if="desserts" flat title="">
-
                 <template v-slot:text>
                     <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line
                         variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table :headers="headers" :items="formattedDesserts" :search="search">
+                <v-data-table
+                    :headers="headers"
+                    items-per-page-text="Элементов на странице"
+                    :items="formattedDesserts"
+                    :search="search"
+                    no-data-text="Данные отсутствуют"
+                >
                     <template v-slot:item="{ item }">
                         <tr>
                             <td>{{ item.id }}</td>
@@ -83,18 +86,14 @@ onMounted(() => {
                                 <v-btn class="w-24" fab dark small color="red"
                                     @click="deleteUserFun(item.id)">Удалить</v-btn>
                             </td>
-
                         </tr>
-                        <!-- <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> -->
                     </template>
                 </v-data-table>
             </v-card>
         </div>
     </div>
-
-
-
 </template>
+
 <style lang="scss" scoped>
 tr,
 td {

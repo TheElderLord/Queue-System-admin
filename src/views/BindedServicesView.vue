@@ -200,7 +200,11 @@ onMounted(() => {
                         variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table :headers="headers" :items="desserts" :search="search">
+                <v-data-table  :headers="headers"
+                    items-per-page-text="Элементов на странице"
+                    :items="formattedDesserts"
+                    :search="search"
+                    no-data-text="Данные отсутствуют">
                     <template v-slot:item="{ item }">
                         <tr>
                             <td>
