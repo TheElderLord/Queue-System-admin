@@ -3,7 +3,6 @@ import type { Branch } from "../models/branches/branches.interface"
 import { onMounted, ref, watch } from "vue"
 import { fetchBranches, postBranch, putBranch, removeBranch } from "../utils/branches.utils";
 
-
 const search = ref<String>("");
 
 const isCreateActive = ref<Boolean>(false);
@@ -28,18 +27,23 @@ const headers = ref([
 ]);
 const desserts = ref([] as Branch[]);
 
-
 const getBranches = async () => {
     desserts.value = await fetchBranches();
     // console.log(desserts.value)
 }
+
 const createBranch = async () => {
-    // console.log(branchObject.value);
+    if (!branchObject.value.name) {
+        alert("Невозможно создать отделение без названия");
+        return;
+    }
+
     await postBranch(branchObject.value);
     getBranches();
     isCreateActive.value = false;
     resetBranchObject();
 }
+
 const show = (id: number) => {
     const selectedBranch = desserts.value.find(e => e.id === id);
     // Check if the selected branch is defined
@@ -54,6 +58,7 @@ const show = (id: number) => {
         // Handle the case where the branch is not found, e.g., by showing a notification or error message
     }
 }
+
 const updateBranch = async () => {
     await putBranch(branchObject.value.id, branchObject.value);
     await getBranches();
@@ -61,15 +66,13 @@ const updateBranch = async () => {
     isCreateActive.value = false;
     isUpdateActive.value = false;
     // console.log(branchObject.value);
-
 }
-
-
 
 const deleteBranch = async (id: number) => {
     await removeBranch(id);
     await getBranches();
 }
+
 const resetBranchObject = () => {
     branchObject.value = {
         id: 0,
@@ -79,6 +82,7 @@ const resetBranchObject = () => {
         parentName: ""
     };
 }
+
 watch(isCreateActive, (newValue) => {
     if (!newValue) {
         resetBranchObject();
@@ -91,10 +95,9 @@ onMounted(() => {
         getBranches();
     }, 3000)
 })
-
 </script>
-<template>
 
+<template>
     <div class="role-container">
         <div class="role-title text-3xl text-center">Отделения</div>
         <div class="role-body w-full">
@@ -121,13 +124,10 @@ onMounted(() => {
                                     <div class="form-floating mb-3">
                                         <select v-model="branchObject.parentId" class="form-select"
                                             aria-label="Default select example">
-                                            <option value="0" selected>Выберите родительское отделение</option>
-                                            <option :value="branch.id" v-for="branch in desserts" :key="branch.id">{{
-                                                branch.name }}
-                                            </option>
+                                            <option value="" disabled selected>Выберите родительское отделение</option>
+                                            <option :value="branch.id" v-for="branch in desserts" :key="branch.id">{{ branch.name }}</option>
                                         </select>
                                     </div>
-
                                 </form>
                             </v-card-text>
 
@@ -148,7 +148,7 @@ onMounted(() => {
                         variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table  :headers="headers"
+                <v-data-table :headers="headers"
                     items-per-page-text="Элементов на странице"
                     :items="desserts"
                     :search="search"
@@ -171,22 +171,17 @@ onMounted(() => {
                                 <v-btn class="w-24" fab dark small color="green" @click="show(item.id)">Изменить</v-btn>
                             </td>
                             <td>
-
                                 <v-btn class="w-24" fab dark small color="red"
                                     @click="deleteBranch(item.id)">Удалить</v-btn>
                             </td>
-
                         </tr>
-                        <!-- <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> -->
                     </template>
                 </v-data-table>
             </v-card>
         </div>
     </div>
-
-
-
 </template>
+
 <style lang="scss" scoped>
 tr,
 td {
