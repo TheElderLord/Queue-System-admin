@@ -38,7 +38,10 @@ const getServices = async () => {
     console.log(desserts.value)
 }
 const createService = async () => {
-    // console.log(branchObject.value);
+    if (!serviceObject.value.name) {
+        alert("Невозможно создать услугу без названия");
+        return;
+    }
     await postService(serviceObject.value);
     getServices();
     isCreateActive.value = false;

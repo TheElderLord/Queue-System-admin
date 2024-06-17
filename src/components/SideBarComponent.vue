@@ -23,7 +23,7 @@ defineProps({
 </template>
 <style lang="scss" scoped>
 .sidebar-container {
-    background-color: #0F044C;
+   
 
 
     .navs {
