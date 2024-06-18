@@ -63,7 +63,7 @@ const links: SideBarLink[] = [
 
 <template>
   <main>
-    <div class="sideBar" style=" background-color: #0F044C;">
+    <div class="sideBar">
       <SideBarComponent :links="links" />
     </div>
     <div class="body">
