@@ -34,6 +34,10 @@ const getRoles = async () => {
 }
 
 const createRole = async () => {
+    if (!roleObject.value.name) {
+        alert("Невозможно создать роль без названия");
+        return;
+    }
     // console.log(branchObject.value);
     await postRole(roleObject.value);
     getRoles();

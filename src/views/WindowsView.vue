@@ -42,6 +42,10 @@ const getWindows = async () => {
     // console.log(desserts.value)
 }
 const createWindow = async () => {
+    if (!WindowObject.value.name) {
+        alert("Невозможно создать окно без названия");
+        return;
+    }
     // console.log(branchObject.value);
     await postWindow(WindowObject.value);
     getWindows();

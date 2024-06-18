@@ -131,7 +131,7 @@ onMounted(() => {
                                     <div class="form-floating mb-3">
                                         <select v-model="serviceObject.parentId" class="form-select"
                                             aria-label="Default select example">
-                                            <option value="0" selected>Выберите родительскую услугу</option>
+                                            <option value="0" disabled selected>Выберите родительскую услугу</option>
                                             <option :value="parent.id" v-for="parent in desserts" :key="parent.id">
                                                 {{ parent.name }}
                                             </option>
