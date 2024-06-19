@@ -4,6 +4,16 @@ import { onMounted, ref, computed } from "vue"
 import { fetchTickets } from "../utils/tickets.utils";
 
 const search = ref("" as string);
+
+const ticketStatusTranslations = {
+    NEW: 'Новый',
+    BOOKED: 'Бронированный',
+    INSERVICE: 'Обслуживающийся',
+    COMPLETED: 'Завершенный',
+    MISSED: 'Не подошедший',
+    ZOMBIE: 'Зомби'
+};
+
 const headers = ref([
 
     { key: "id", title: "ID", align: "center" },
@@ -20,8 +30,6 @@ const headers = ref([
     { key: "directed", title: "Направлен", align: "center" },
     { key: "redirectedWindowId", title: "ID перенаправленного окна", align: "center" },
     { key: "rating", title: "Рейтинг", align: "center" },
-    { key: "action", title: "Действие", align: "center" }
-
 ]);
 const desserts = ref([] as Ticket[]);
 
@@ -29,17 +37,25 @@ const getRoles = async () => {
     desserts.value = await fetchTickets();
 }
 
+
 const formattedDesserts = computed(() => {
-    return desserts.value.map((ticket) => ({
-        ...ticket,
+    return desserts.value.map(ticket => {
+        const translatedTicketStatus = ticketStatusTranslations[ticket.status] || ticket.status;
+        
+        return {
+            ...ticket,
         registrationTime: new Date(ticket.registrationTime).toLocaleString('ru-RU'),
+        status: translatedTicketStatus,
         serviceStartTime: ticket.serviceStartTime ? new Date(ticket.serviceStartTime).toLocaleString('ru-RU') : null,
         serviceEndTime: ticket.serviceEndTime
             ? new Date(ticket.serviceEndTime).toLocaleString('ru-RU')
             : null,
         isDirected: ticket.directed ? 'Да' : 'Нет',
-    }));
+        };
+    })
 });
+
+
 
 onMounted(() => {
     getRoles()
@@ -62,7 +78,7 @@ onMounted(() => {
                 <v-data-table
                     :headers="headers"
                     items-per-page-text="Элементов на странице"
-                    :items="desserts"
+                    :items="formattedDesserts"
                     :search="search"
                     no-data-text="Данные отсутствуют"
                 >
@@ -82,10 +98,6 @@ onMounted(() => {
                             <td>{{ item.isDirected }}</td>
                             <td>{{ item.redirectedWindowId }}</td>
                             <td>{{ item.rating }}</td>
-                            <td>
-                                <v-btn class="w-24" fab dark small color="red"
-                                    @click="deleteUserFun(item.id)">Удалить</v-btn>
-                            </td>
                         </tr>
                     </template>
                 </v-data-table>
