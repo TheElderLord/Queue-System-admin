@@ -27,7 +27,7 @@ const headers = ref([
     { key: "status", title: "Статус", align: "center" },
     { key: "bookingTime", title: "Время бронирования", align: "center" },
     { key: "bookingCode", title: "Код бронирования", align: "center" },
-    { key: "directed", title: "Направлен", align: "center" },
+    { key: "directed", title: "Перенаправлен", align: "center" },
     { key: "redirectedWindowId", title: "ID перенаправленного окна", align: "center" },
     { key: "rating", title: "Рейтинг", align: "center" },
 ]);
