@@ -38,7 +38,10 @@ const getServices = async () => {
     console.log(desserts.value)
 }
 const createService = async () => {
-    // console.log(branchObject.value);
+    if (!serviceObject.value.name) {
+        alert("Невозможно создать услугу без названия");
+        return;
+    }
     await postService(serviceObject.value);
     getServices();
     isCreateActive.value = false;
@@ -128,7 +131,7 @@ onMounted(() => {
                                     <div class="form-floating mb-3">
                                         <select v-model="serviceObject.parentId" class="form-select"
                                             aria-label="Default select example">
-                                            <option value="0" selected>Выберите родительскую услугу</option>
+                                            <option value="0" disabled selected>Выберите родительскую услугу</option>
                                             <option :value="parent.id" v-for="parent in desserts" :key="parent.id">
                                                 {{ parent.name }}
                                             </option>
@@ -170,7 +173,11 @@ onMounted(() => {
                         variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table :headers="headers" :items="desserts" :search="search">
+                <v-data-table  :headers="headers"
+                    items-per-page-text="Элементов на странице"
+                    :items="desserts"
+                    :search="search"
+                    no-data-text="Данные отсутствуют">
                     <template v-slot:item="{ item }">
                         <tr>
                             <td>

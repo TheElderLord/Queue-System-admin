@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import type { Branch } from "../models/branches/branches.interface"
-import { onMounted, ref, watch } from "vue"
+import type { Branch } from "../models/branches/branches.interface";
+import { onMounted, ref, watch } from "vue";
 import { fetchBranches, postBranch, putBranch, removeBranch } from "../utils/branches.utils";
-
+import cloneDeep from 'lodash/cloneDeep';
 
 const search = ref<String>("");
 
@@ -19,33 +19,50 @@ const branchObject = ref<Branch>({
 });
 
 const headers = ref([
-    { key: "id", title: "ID", align: "center", },
-    { key: "name", title: "Название", align: "center", },
+    { key: "id", title: "ID", align: "center" },
+    { key: "name", title: "Название", align: "center" },
     { key: "description", title: "Описание", align: "center" },
     { key: "parentName", title: "Родитель", align: "center" },
     { key: "update", title: "Обновить", align: "center" },
     { key: "delete", title: "Удалить", align: "center" },
 ]);
-const desserts = ref([] as Branch[]);
 
+const desserts = ref([] as Branch[]);
 
 const getBranches = async () => {
     desserts.value = await fetchBranches();
-    // console.log(desserts.value)
-}
+    // Update parent names for display purposes
+    desserts.value.forEach(branch => {
+        const parentBranch = desserts.value.find(b => b.id === branch.parentId);
+        branch.parentName = parentBranch ? parentBranch.name : "";
+    });
+    console.log("Branches loaded:", desserts.value); // Debugging
+};
+
 const createBranch = async () => {
-    // console.log(branchObject.value);
+    if (!branchObject.value.name) {
+        alert("Невозможно создать отделение без названия");
+        return;
+    }
+
+    if (branchObject.value.parentId === branchObject.value.id) {
+        alert("Отделение не может быть своим родительским отделением");
+        return;
+    }
+
     await postBranch(branchObject.value);
-    getBranches();
+    await getBranches();
     isCreateActive.value = false;
     resetBranchObject();
-}
+};
+
 const show = (id: number) => {
     const selectedBranch = desserts.value.find(e => e.id === id);
     // Check if the selected branch is defined
     if (selectedBranch) {
         // Assign the found branch to branchObject
-        branchObject.value = { ...selectedBranch };
+        branchObject.value = cloneDeep(selectedBranch);
+        branchObject.value.parentId = selectedBranch.parentId; // Ensure parentId is correctly set
         branchObject.value.id = id;
         isCreateActive.value = true;
         isUpdateActive.value = true;
@@ -53,32 +70,46 @@ const show = (id: number) => {
         console.error(`Branch with id ${id} not found.`);
         // Handle the case where the branch is not found, e.g., by showing a notification or error message
     }
-}
+};
+
 const updateBranch = async () => {
+    if (branchObject.value.parentId === branchObject.value.id) {
+        alert("Отделение не может быть своим родительским отделением");
+        return;
+    }
+
+    console.log("Updating branch with data:", branchObject.value); // Debugging
     await putBranch(branchObject.value.id, branchObject.value);
+
+    // Получаем обновленные данные отделений
     await getBranches();
-    resetBranchObject();
+
+    resetBranchObject(); // Сбрасываем branchObject
     isCreateActive.value = false;
     isUpdateActive.value = false;
-    // console.log(branchObject.value);
-
-}
-
-
+};
 
 const deleteBranch = async (id: number) => {
     await removeBranch(id);
     await getBranches();
-}
+};
+
 const resetBranchObject = () => {
-    branchObject.value = {
+    branchObject.value = cloneDeep({
         id: 0,
         name: "",
         description: "",
         parentId: null,
         parentName: ""
-    };
-}
+    });
+};
+
+// Function to check if a branch is a child of the selected branchObject
+const isChild = (branch: Branch, selectedId: number) => {
+    // If branch has a parentId and it matches the selectedId, it's a child
+    return branch.parentId !== null && branch.parentId === selectedId;
+};
+
 watch(isCreateActive, (newValue) => {
     if (!newValue) {
         resetBranchObject();
@@ -86,15 +117,14 @@ watch(isCreateActive, (newValue) => {
 });
 
 onMounted(() => {
-    getBranches()
+    getBranches();
     setInterval(() => {
         getBranches();
-    }, 3000)
-})
-
+    }, 3000);
+});
 </script>
-<template>
 
+<template>
     <div class="role-container">
         <div class="role-title text-3xl text-center">Отделения</div>
         <div class="role-body w-full">
@@ -121,13 +151,16 @@ onMounted(() => {
                                     <div class="form-floating mb-3">
                                         <select v-model="branchObject.parentId" class="form-select"
                                             aria-label="Default select example">
-                                            <option value="0" selected>Выберите родительское отделение</option>
-                                            <option :value="branch.id" v-for="branch in desserts" :key="branch.id">{{
-                                                branch.name }}
+                                            <option :value="null">Нет родительского отделения</option>
+                                            <option 
+                                                v-for="branch in desserts" 
+                                                :key="branch.id"
+                                                :value="branch.id"
+                                                :disabled="branch.id === branchObject.id || branchObject.parentId === branch.id || isChild(branch, branchObject.id)">
+                                                {{ branch.name }}
                                             </option>
                                         </select>
                                     </div>
-
                                 </form>
                             </v-card-text>
 
@@ -148,7 +181,11 @@ onMounted(() => {
                         variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table :headers="headers" :items="desserts" :search="search">
+                <v-data-table :headers="headers"
+                    items-per-page-text="Элементов на странице"
+                    :items="desserts"
+                    :search="search"
+                    no-data-text="Данные отсутствуют">
                     <template v-slot:item="{ item }">
                         <tr>
                             <td>
@@ -167,22 +204,17 @@ onMounted(() => {
                                 <v-btn class="w-24" fab dark small color="green" @click="show(item.id)">Изменить</v-btn>
                             </td>
                             <td>
-
                                 <v-btn class="w-24" fab dark small color="red"
                                     @click="deleteBranch(item.id)">Удалить</v-btn>
                             </td>
-
                         </tr>
-                        <!-- <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> -->
                     </template>
                 </v-data-table>
             </v-card>
         </div>
     </div>
-
-
-
 </template>
+
 <style lang="scss" scoped>
 tr,
 td {

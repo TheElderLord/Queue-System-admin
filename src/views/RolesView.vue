@@ -34,6 +34,10 @@ const getRoles = async () => {
 }
 
 const createRole = async () => {
+    if (!roleObject.value.name) {
+        alert("Невозможно создать роль без названия");
+        return;
+    }
     // console.log(branchObject.value);
     await postRole(roleObject.value);
     getRoles();
@@ -144,7 +148,11 @@ onMounted(() => {
                         variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table :headers="headers" :items="desserts" :search="search">
+                <v-data-table  :headers="headers"
+                    items-per-page-text="Элементов на странице"
+                    :items="desserts"
+                    :search="search"
+                    no-data-text="Данные отсутствуют">
                     <template v-slot:item="{ item }">
                         <tr>
                             <td>

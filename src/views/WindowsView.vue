@@ -42,6 +42,10 @@ const getWindows = async () => {
     // console.log(desserts.value)
 }
 const createWindow = async () => {
+    if (!WindowObject.value.name) {
+        alert("Невозможно создать окно без названия");
+        return;
+    }
     // console.log(branchObject.value);
     await postWindow(WindowObject.value);
     getWindows();
@@ -166,7 +170,12 @@ onMounted(() => {
                         variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table :headers="headers" :items="desserts" :search="search">
+                <v-data-table 
+                :headers="headers"
+                    items-per-page-text="Элементов на странице"
+                    :items="desserts"
+                    :search="search"
+                    no-data-text="Данные отсутствуют">
                     <template v-slot:item="{ item }">
                         <tr>
                             <td>

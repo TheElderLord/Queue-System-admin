@@ -10,7 +10,7 @@ const isCreateActive = ref<boolean>(false);
 const isUpdateActive = ref<boolean>(false);
 
 const operatorObject = ref<Operator>({
-    id: 0, // Initialize with default values
+    id: 0,
     name: "",
     lastname: "",
     login: "",
@@ -28,63 +28,77 @@ const headers = ref([
     { key: 'active', title: 'Активен', align: 'center' },
     { key: 'update', title: 'Изменить', align: 'center' },
     { key: 'action', title: 'Удалить', align: 'center' }
-])
-const desserts = ref([] as Operator[])
+]);
 
-const roles = ref([] as RoleModel[])
+const desserts = ref([] as Operator[]);
+const roles = ref([] as RoleModel[]);
 
 const getOperators = async () => {
-    desserts.value = await fetchOperators()
-    // console.log(desserts.value)
+    desserts.value = await fetchOperators();
 }
+
 const getRoles = async () => {
     roles.value = await fetchRoles();
 }
+
+const isValidOperatorForm = (): boolean => {
+    return !!operatorObject.value.name &&
+           !!operatorObject.value.lastname &&
+           !!operatorObject.value.login &&
+           !!operatorObject.value.password &&
+           operatorObject.value.roleId !== 0;
+};
+
 const createOperator = async () => {
-    // console.log(branchObject.value);
+    if (!operatorObject.value.name || !operatorObject.value.lastname || !operatorObject.value.login || !operatorObject.value.password || operatorObject.value.roleId === 0) {
+        alert("Пожалуйста, заполните все обязательные поля и выберите роль.");
+        return;
+    }
+
     await postOperator(operatorObject.value);
-    getOperators();
+    await getOperators();
     isCreateActive.value = false;
     resetOperatorObject();
 }
+
 const show = async (id: number) => {
     const selectedOperator = desserts.value.find(e => e.id === id);
-    // Check if the selected branch is defined
     if (selectedOperator) {
-        // Assign the found branch to branchObject
         operatorObject.value = { ...selectedOperator };
         operatorObject.value.id = id;
         isCreateActive.value = true;
         isUpdateActive.value = true;
     } else {
         console.error(`Operator with id ${id} not found.`);
-        // Handle the case where the branch is not found, e.g., by showing a notification or error message
     }
 }
+
 const close = () => {
     isCreateActive.value = false;
     isUpdateActive.value = false;
 }
+
 const updateOperator = async () => {
-    console.log(operatorObject.value);
+    if (!operatorObject.value.name || !operatorObject.value.lastname || !operatorObject.value.login || !operatorObject.value.password || operatorObject.value.roleId === 0) {
+        alert("Пожалуйста, заполните все обязательные поля и выберите роль.");
+        return;
+    }
+
     await putOperator(operatorObject.value.id, operatorObject.value);
     await getOperators();
     resetOperatorObject();
     isCreateActive.value = false;
     isUpdateActive.value = false;
-    // console.log(branchObject.value);
-
 }
-
-
 
 const deleteOperator = async (id: number) => {
     await removeOperator(id);
     await getOperators();
 }
+
 const resetOperatorObject = () => {
     operatorObject.value = {
-        id: 0, // Initialize with default values
+        id: 0,
         name: "",
         lastname: "",
         login: "",
@@ -94,20 +108,23 @@ const resetOperatorObject = () => {
         active: false
     };
 }
+
 watch(isCreateActive, (newValue) => {
     if (!newValue) {
         resetOperatorObject();
     }
 });
+
 onMounted(() => {
-    getOperators()
-    getRoles()
+    getOperators();
+    getRoles();
     setInterval(() => {
-        getOperators()
-        getRoles()
-    }, 3000)
-})
+        getOperators();
+        getRoles();
+    }, 3000);
+});
 </script>
+
 <template>
     <div class="role-container">
         <div class="role-title text-3xl text-center">Операторы</div>
@@ -145,7 +162,7 @@ onMounted(() => {
                                     <div class="form-floating mb-3">
                                         <select v-model="operatorObject.roleId" class="form-select"
                                             aria-label="Default select example">
-                                            <option value="0" selected>Выберите роль</option>
+                                            <option value="0" disabled selected>Выберите роль</option>
                                             <option :value="role.id" v-for="role in roles" :key="role.id">
                                                 {{ role.name }}
                                             </option>
@@ -156,8 +173,8 @@ onMounted(() => {
 
                             <v-card-actions>
                                 <v-spacer></v-spacer>
-                                <v-btn v-if="isUpdateActive" @click="updateOperator()" text="Изменить"></v-btn>
-                                <v-btn v-else @click="createOperator()" text="Сохранить"></v-btn>
+                                <v-btn v-if="isUpdateActive" :disabled="!isValidOperatorForm()" @click="updateOperator()" text="Изменить"></v-btn>
+                                <v-btn v-else :disabled="!isValidOperatorForm()" @click="createOperator()" text="Сохранить"></v-btn>
                                 <v-btn text="Закрыть" @click="close()"></v-btn>
                             </v-card-actions>
                         </v-card>
@@ -170,21 +187,17 @@ onMounted(() => {
                         variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table :headers="headers" :items="desserts" :search="search">
+                <v-data-table :headers="headers"
+                    items-per-page-text="Элементов на странице"
+                    :items="desserts"
+                    :search="search"
+                    no-data-text="Данные отсутствуют">
                     <template v-slot:item="{ item }">
                         <tr>
-                            <td>
-                                {{ item.id }}
-                            </td>
-                            <td>
-                                {{ item.name }}
-                            </td>
-                            <td>
-                                {{ item.lastname }}
-                            </td>
-                            <td>
-                                {{ item.roleName }}
-                            </td>
+                            <td>{{ item.id }}</td>
+                            <td>{{ item.name }}</td>
+                            <td>{{ item.lastname }}</td>
+                            <td>{{ item.roleName }}</td>
                             <td>
                                 <i v-if="item.active" class="fas fa-circle text-green-500"></i>
                                 <i v-else class="fas fa-circle text-red-500"></i>
@@ -193,17 +206,16 @@ onMounted(() => {
                                 <v-btn class="w-24" fab dark small color="green" @click="show(item.id)">Изменить</v-btn>
                             </td>
                             <td>
-                                <v-btn class="w-24" fab dark small color="red"
-                                    @click="deleteOperator(item.id)">Удалить</v-btn>
+                                <v-btn class="w-24" fab dark small color="red" @click="deleteOperator(item.id)">Удалить</v-btn>
                             </td>
                         </tr>
-                        <!-- <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> -->
                     </template>
                 </v-data-table>
             </v-card>
         </div>
     </div>
 </template>
+
 <style lang="scss" scoped>
 tr,
 td {
