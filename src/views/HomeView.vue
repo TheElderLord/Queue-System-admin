@@ -3,6 +3,6 @@
 </script>
 <template>
     <div>
-        Home View
+       Главная
     </div>
 </template>

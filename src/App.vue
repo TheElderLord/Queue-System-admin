@@ -4,12 +4,12 @@ import HeaderComponentVue from './components/HeaderComponent.vue'
 import SideBarComponent from './components/SideBarComponent.vue'
 import type { SideBarLink } from './models/sidebarlink/sidebar.interface'
 const links: SideBarLink[] = [
-  {
-    id: 1,
-    name: 'Главная',
-    link: '/',
-    icon: 'fas fa-home'
-  },
+  // {
+  //   id: 1,
+  //   name: 'Главная',
+  //   link: '/',
+  //   icon: 'fas fa-home'
+  // },
   {
     id: 2,
     name: 'Отделения',
