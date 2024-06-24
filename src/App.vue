@@ -13,7 +13,7 @@ const links: SideBarLink[] = [
   {
     id: 2,
     name: 'Отделения',
-    link: '/branches',
+    link: '/',
     icon: 'fas fa-building'
   },
   {
