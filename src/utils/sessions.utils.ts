@@ -13,3 +13,13 @@ export const fetchSessions = async (): Promise<Session[]> => {
     }
 
 }
+export const stopASession = async (id: number): Promise<Session[]> => {
+    try {
+        const response: AxiosResponse<Session[]> = await axios.put<Session[]>(`${SESSION_URL}/${id}?status=FORCED`);
+        return response.data;
+    } catch (error) {
+        console.error("Error fetching roles:", error);
+        throw error; // Re-throw the error to handle it elsewhere if needed
+    }
+
+}

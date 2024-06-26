@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Session } from "../models/sessions/session.inteface"
 import { onMounted, ref, computed } from "vue"
-import { fetchSessions } from "../utils/sessions.utils";
+import { fetchSessions, stopASession } from "../utils/sessions.utils";
 
 const search = ref("" as string);
 
@@ -24,11 +24,12 @@ const headers = ref([
     { key: "endTime", title: "Конец", align: "center" },
     { key: "working-time", title: "Время", align: "center" },
     { key: "active", title: "Активен", align: "center" },
+    { key: "action", title: "Действия", align: "center" },
 ]);
 
 const desserts = ref([] as Session[]);
 
-const getRoles = async () => {
+const getSessions = async () => {
     desserts.value = await fetchSessions();
 }
 
@@ -47,11 +48,15 @@ const formatTimeDifference = (startTime: string, endTime: string | null) => {
 
     return `${String(diffHrs).padStart(2, '0')}:${String(diffMins).padStart(2, '0')}:${String(diffSecs).padStart(2, '0')}`;
 }
+const stop = async (id: number) => {
+    await stopASession(id);
+    await getSessions();
+}
 
 const formattedDesserts = computed(() => {
     return desserts.value.map(ticket => {
         const workingTime = formatTimeDifference(ticket.startTime, ticket.endTime);
-        
+
         const formatDate = (date: Date) => {
             const day = String(date.getDate()).padStart(2, '0');
             const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -75,13 +80,13 @@ const formattedDesserts = computed(() => {
 });
 
 onMounted(() => {
-    getRoles();
+    getSessions();
     setInterval(() => {
         desserts.value = [...desserts.value]; // Trigger reactivity for computed property
     }, 1000);
 
     setInterval(() => {
-        getRoles();
+        getSessions();
     }, 3000)
 });
 </script>
@@ -92,14 +97,12 @@ onMounted(() => {
         <div class="role-body w-full">
             <v-card v-if="desserts" flat title="">
                 <template v-slot:text>
-                    <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined" hide-details></v-text-field>
+                    <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line
+                        variant="outlined" hide-details></v-text-field>
                 </template>
 
-                <v-data-table :headers="headers"
-                    items-per-page-text="Элементов на странице"
-                    :items="formattedDesserts"
-                    :search="search"
-                    no-data-text="Данные отсутствуют">
+                <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="formattedDesserts"
+                    :search="search" no-data-text="Данные отсутствуют">
                     <template v-slot:item="{ item }">
                         <tr>
                             <td>{{ item.id }}</td>
@@ -114,6 +117,9 @@ onMounted(() => {
                             <td>
                                 <i v-if="item.active" class="fas fa-circle text-green-500"></i>
                                 <i v-else class="fas fa-circle text-red-500"></i>
+                            </td>
+                            <td>
+                                <button @click="stop(item.id)" class="btn btn-primary">Завершить сессию</button>
                             </td>
                         </tr>
                     </template>
