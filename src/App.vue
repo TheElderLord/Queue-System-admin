@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { RouterLink, RouterView } from 'vue-router'
+import { RouterView } from 'vue-router'
 import HeaderComponentVue from './components/HeaderComponent.vue'
 import SideBarComponent from './components/SideBarComponent.vue'
 import type { SideBarLink } from './models/sidebarlink/sidebar.interface'
@@ -57,7 +57,7 @@ const links: SideBarLink[] = [
     name: 'Билеты',
     link: '/tickets',
     icon: 'fas fa-ticket-alt'
-  },
+  }
 ]
 </script>
 
@@ -67,14 +67,13 @@ const links: SideBarLink[] = [
       <SideBarComponent :links="links" />
     </div>
     <div class="body">
-      <div class="header ">
+      <div class="header">
         <HeaderComponentVue />
       </div>
       <div class="body-container p-4">
         <RouterView />
       </div>
     </div>
-
   </main>
 </template>
 <style lang="scss" scoped>
@@ -99,10 +98,7 @@ main {
 
     .body-container {
       width: 100%;
-
     }
-
-
   }
 }
 </style>

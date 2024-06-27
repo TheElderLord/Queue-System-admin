@@ -6,8 +6,8 @@ import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
 
-import "bootstrap/dist/css/bootstrap.min.css"
-import "bootstrap"
+import 'bootstrap/dist/css/bootstrap.min.css'
+import 'bootstrap'
 
 import 'vuetify/styles'
 import { createVuetify } from 'vuetify'
@@ -19,14 +19,13 @@ import '@mdi/font/css/materialdesignicons.css'
 
 import '@fortawesome/fontawesome-free/js/all'
 
-
 const vuetify = createVuetify({
-    components,
-    directives,
+  components,
+  directives
 })
 
 const app = createApp(App)
-app.use(vuetify);
+app.use(vuetify)
 
 app.use(createPinia())
 app.use(router)

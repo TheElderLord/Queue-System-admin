@@ -4,11 +4,10 @@ import OperatorsView from '@/views/OperatorsView.vue'
 import WindowsView from '@/views/WindowsView.vue'
 import SessionsView from '@/views/SessionsView.vue'
 import TicketsView from '@/views/TicketsView.vue'
-import HomeView from '@/views/HomeView.vue'
+// import HomeView from '@/views/HomeView.vue'
 import BranchesView from '@/views/BranchesView.vue'
 import ServicesView from '@/views/ServicesView.vue'
 import BindedServicesView from '@/views/BindedServicesView.vue'
-
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -57,8 +56,7 @@ const router = createRouter({
       path: '/role-services',
       name: 'role-services',
       component: BindedServicesView
-    },
-
+    }
   ]
 })
 
