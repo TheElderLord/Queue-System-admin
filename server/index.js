@@ -1,6 +1,8 @@
 /* eslint-disable no-undef */
 const express = require('express')
 const path = require('path')
+const dotenv = require('dotenv')
+dotenv.config();
 
 const app = express()
 
@@ -15,7 +17,7 @@ app.get('*', (req, res) => {
   res.sendFile(path.join(distPath, 'index.html'))
 })
 
-const appPort = 5173
-app.listen(appPort, () => {
-  console.log(`Server listening on port ${appPort}`)
+const port = process.env.APP_PORT;
+app.listen(port, () => {
+  console.log(`Server listening on port ${port}`)
 })
