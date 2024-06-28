@@ -1,6 +1,7 @@
 import { ROLE_SERVICES_URL } from './base.utils'
 import type { RoleService } from '@/models/role-services/role-service.interface'
 import axios, { type AxiosResponse } from 'axios'
+import { id } from 'vuetify/locale'
 
 export const fetchRoleServices = async (): Promise<RoleService[]> => {
   try {
@@ -11,9 +12,10 @@ export const fetchRoleServices = async (): Promise<RoleService[]> => {
     throw error // Re-throw the error to handle it elsewhere if needed
   }
 }
-export const postRoleService = async (RoleServiceObject: RoleService) => {
+export const postRoleService = async (id:number, RoleServiceObjectArray: RoleService[]) => {
   try {
-    const response = await axios.post(ROLE_SERVICES_URL, RoleServiceObject)
+    console.log(RoleServiceObjectArray)
+    const response = await axios.post(`${ROLE_SERVICES_URL}/role/${id}`, RoleServiceObjectArray)
     return response.data
   } catch (error) {
     console.error('Error fetching RoleServices:', error)

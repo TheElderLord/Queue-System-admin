@@ -22,12 +22,12 @@ const links: SideBarLink[] = [
     link: '/services',
     icon: 'fas fa-concierge-bell'
   },
-  {
-    id: 4,
-    name: 'Привязанные услуги',
-    link: '/role-services',
-    icon: 'fas fa-window-maximize'
-  },
+  // {
+  //   id: 4,
+  //   name: 'Привязанные услуги',
+  //   link: '/role-services',
+  //   icon: 'fas fa-window-maximize'
+  // },
   {
     id: 5,
     name: 'Роли',
