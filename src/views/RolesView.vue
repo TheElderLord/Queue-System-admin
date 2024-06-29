@@ -31,10 +31,10 @@ const roleObject = ref<RoleModel>({
   description: '',
   priority: 0,
   roleServices: [],
-  show:false
+  show: false
 })
 
-const getServices = async()=>{
+const getServices = async () => {
   services.value = await fetchServices();
 }
 
@@ -51,7 +51,7 @@ const createRole = async () => {
   // console.log(branchObject.value);
   const role = await postRole(roleObject.value)
   console.log(selectedService.value)
-  await addServiceToRole(role.id,selectedServices.value); 
+  await addServiceToRole(role.id, selectedServices.value);
   await getRoles()
   isCreateActive.value = false
   resetRoleObject()
@@ -94,14 +94,14 @@ const resetRoleObject = () => {
     description: '',
     priority: 0,
     roleServices: [],
-    show:false
+    show: false
   }
 }
-const selectServices = ()=>{
+const selectServices = () => {
   const service = services.value.find(s => s.id === selectedService.value);
   selectedServices.value.push({
-    serviceId:service?.id,
-    serviceName:service?.name
+    serviceId: service?.id,
+    serviceName: service?.name
   })
 
   // if (service && !selectedServices.value.some(s => s.id === service.id)) {
@@ -110,12 +110,12 @@ const selectServices = ()=>{
   //   });
   // }
 }
-const deleteFromSelected = (id:number)=>{
-    selectedServices.value = selectedServices.value.filter(e=>e.id !== id);
-   
+const deleteFromSelected = (id: number) => {
+  selectedServices.value = selectedServices.value.filter(e => e.id !== id);
+
 }
-const addServiceToRole = async(id:number,services:RoleService[])=>{
-    await postRoleService(id,services)
+const addServiceToRole = async (id: number, services: RoleService[]) => {
+  await postRoleService(id, services)
 }
 watch(isCreateActive, (newValue) => {
   if (!newValue) {
@@ -125,9 +125,9 @@ watch(isCreateActive, (newValue) => {
 onMounted(() => {
   getRoles()
   getServices()
-  setInterval(() => {
-    getRoles()
-  }, 3000)
+  // setInterval(() => {
+  //   getRoles()
+  // }, 3000)
 })
 </script>
 <template>
@@ -160,8 +160,9 @@ onMounted(() => {
                     <label for="floatingPassword">Приоритет</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <select class="form-select" aria-label="Default select example" v-model="selectedService" @change="selectServices()">
-                      <option value="0" >Выберите услуги</option>
+                    <select class="form-select" aria-label="Default select example" v-model="selectedService"
+                      @change="selectServices()">
+                      <option value="0">Выберите услуги</option>
                       <option v-for="service in services" :key="service.id" :value="service.id">
                         {{ service.name }}
                       </option>
@@ -169,8 +170,8 @@ onMounted(() => {
                     <label for="floatingPassword">Услуги</label>
                   </div>
                   <div v-if="selectedServices" class="selects ">
-                    <div  v-for="sel in selectedServices" :key="sel.id" class="select ">
-                      <div @click="deleteFromSelected(sel.id)" class="but"><i class="fas fa-times"></i></div> 
+                    <div v-for="sel in selectedServices" :key="sel.id" class="select ">
+                      <div @click="deleteFromSelected(sel.id)" class="but"><i class="fas fa-times"></i></div>
                       <div class="title">{{ sel.serviceName }}</div>
                     </div>
                   </div>
@@ -254,8 +255,8 @@ onMounted(() => {
         <div v-for="roleService in desserts" :key="roleService.id" class="roleService">
           <div class="static">
             <div class="toggle" @click="roleService.show = !roleService.show">
-              <i  class="fas fa-arrow-down"></i>
-            
+              <i class="fas fa-arrow-down"></i>
+
             </div>
             <div class="id">
               {{ roleService.id }}
@@ -277,8 +278,8 @@ onMounted(() => {
             </div>
           </div>
           <div v-if="roleService.show" class="hidden-block">
-            <div  v-for="rs in roleService.roleServices" :key="rs.id" class="hid text-center py-2 text-xl">
-                {{ rs.serviceName }}
+            <div v-for="rs in roleService.roleServices" :key="rs.id" class="hid text-center py-2 text-xl">
+              {{ rs.serviceName }}
             </div>
           </div>
 
@@ -293,10 +294,12 @@ tr,
 td {
   text-align: center;
 }
-.selects{
+
+.selects {
   width: 100%;
   display: flex;
-  .select{
+
+  .select {
     cursor: pointer;
     width: fit-content;
     padding: 0.2rem;
@@ -305,28 +308,32 @@ td {
     color: white;
     background-color: gray;
     display: flex;
-    .title{
+
+    .title {
       color: white;
     }
-    .but{
+
+    .but {
       cursor: pointer;
     }
 
   }
 }
+
 .roleServices {
   margin: 1rem auto;
   width: 100%;
-  
+
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
 
   .roleService {
     width: 100%;
-   
+
     background-color: rgb(245, 245, 245);
     box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
     .static {
       width: 100%;
       display: flex;
@@ -336,20 +343,23 @@ td {
 
       border-radius: .5rem;
       font-size: 20px;
-      .toggle{
+
+      .toggle {
         cursor: pointer;
       }
-      div{
+
+      div {
         width: 100%;
       }
     }
-    .hidden-block{
-      .hid{
+
+    .hidden-block {
+      .hid {
         border: 1px solid black
       }
     }
 
-    
+
   }
 
 }
