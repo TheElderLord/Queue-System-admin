@@ -300,6 +300,7 @@ td {
 .selects {
   width: 100%;
   display: flex;
+  overflow-x: scroll;
 
   .select {
     cursor: pointer;
