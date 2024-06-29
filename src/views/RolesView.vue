@@ -62,6 +62,7 @@ const show = async (id: number) => {
   if (selectedRole) {
     // Assign the found branch to branchObject
     roleObject.value = { ...selectedRole }
+    selectedServices.value = roleObject.value.roleServices;
     roleObject.value.id = id
     isCreateActive.value = true
     isUpdateActive.value = true
@@ -77,6 +78,7 @@ const close = () => {
 const updateRole = async () => {
   console.log(roleObject.value)
   await putRole(roleObject.value.id, roleObject.value)
+  await addServiceToRole(roleObject.value.id, selectedServices.value)
   await getRoles()
   resetRoleObject()
   isCreateActive.value = false
