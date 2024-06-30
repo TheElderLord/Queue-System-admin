@@ -23,3 +23,13 @@ export const stopASession = async (id: number): Promise<Session[]> => {
     throw error // Re-throw the error to handle it elsewhere if needed
   }
 }
+export const deleteRequest = async (id: number): Promise<Session[]> => {
+  try {
+    const response: AxiosResponse<Session[]> = await axios.delete<Session[]>(`${SESSION_URL}/${id}`
+    )
+    return response.data
+  } catch (error) {
+    console.error('Error fetching roles:', error)
+    throw error // Re-throw the error to handle it elsewhere if needed
+  }
+}

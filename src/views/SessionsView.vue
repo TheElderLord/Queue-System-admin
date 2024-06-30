@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Session } from '../models/sessions/session.inteface'
 import { onMounted, ref, computed } from 'vue'
-import { fetchSessions, stopASession } from '../utils/sessions.utils'
+import { deleteRequest, fetchSessions, stopASession } from '../utils/sessions.utils'
 
 const search = ref('' as string)
 
@@ -24,7 +24,8 @@ const headers = ref([
   { key: 'endTime', title: 'Конец', align: 'center' },
   { key: 'working-time', title: 'Время', align: 'center' },
   { key: 'active', title: 'Активен', align: 'center' },
-  { key: 'action', title: 'Действия', align: 'center' }
+  { key: 'action', title: 'Действия', align: 'center' },
+  { key: 'delete', title: 'Удалить', align: 'center' }
 ])
 
 const desserts = ref([] as Session[])
@@ -78,12 +79,16 @@ const formattedDesserts = computed(() => {
     }
   })
 })
+const deleteSession = async (id: number) => {
+  await deleteRequest(id);
+  await getSessions();
+}
 
 onMounted(() => {
   getSessions()
-  setInterval(() => {
-    desserts.value = [...desserts.value] // Trigger reactivity for computed property
-  }, 1000)
+  // setInterval(() => {
+  //   desserts.value = [...desserts.value] // Trigger reactivity for computed property
+  // }, 1000)
 
   setInterval(() => {
     getSessions()
@@ -97,23 +102,12 @@ onMounted(() => {
     <div class="role-body w-full">
       <v-card v-if="desserts" flat title="">
         <template v-slot:text>
-          <v-text-field
-            v-model="search"
-            label="Искать"
-            prepend-inner-icon="mdi-magnify"
-            single-line
-            variant="outlined"
-            hide-details
-          ></v-text-field>
+          <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
+            hide-details></v-text-field>
         </template>
 
-        <v-data-table
-          :headers="headers"
-          items-per-page-text="Элементов на странице"
-          :items="formattedDesserts"
-          :search="search"
-          no-data-text="Данные отсутствуют"
-        >
+        <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="formattedDesserts"
+          :search="search" no-data-text="Данные отсутствуют">
           <template v-slot:item="{ item }">
             <tr>
               <td>{{ item.id }}</td>
@@ -131,6 +125,9 @@ onMounted(() => {
               </td>
               <td>
                 <button @click="stop(item.id)" class="btn btn-primary">Завершить сессию</button>
+              </td>
+              <td>
+                <button @click="deleteSession(item.id)" class="btn btn-primary">Удалить</button>
               </td>
             </tr>
           </template>
