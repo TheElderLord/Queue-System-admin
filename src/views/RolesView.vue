@@ -281,7 +281,7 @@ onMounted(() => {
           </div>
           <div v-if="roleService.show" class="hidden-block">
             <div v-for="rs in roleService.roleServices" :key="rs.id" class="hid text-center py-2 text-xl">
-              {{ rs.serviceName }}
+              {{ rs.parentServiceName + "/" + rs.serviceName }}
             </div>
           </div>
 

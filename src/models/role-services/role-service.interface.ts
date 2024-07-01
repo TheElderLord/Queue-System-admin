@@ -6,4 +6,5 @@ export interface RoleService {
   // roleName: string
   serviceId: number
   serviceName: string
+  parentServiceName: string
 }
