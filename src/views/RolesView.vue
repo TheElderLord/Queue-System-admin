@@ -166,7 +166,7 @@ onMounted(() => {
                       @change="selectServices()">
                       <option value="0">Выберите услуги</option>
                       <option v-for="service in services" :key="service.id" :value="service.id">
-                        {{ service.name }}
+                        {{ service.parentName + "/" + service.name }}
                       </option>
                     </select>
                     <label for="floatingPassword">Услуги</label>
