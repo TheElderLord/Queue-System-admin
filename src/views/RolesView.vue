@@ -174,7 +174,7 @@ onMounted(() => {
                   <div v-if="selectedServices" class="selects ">
                     <div v-for="sel in selectedServices" :key="sel.id" class="select ">
                       <div @click="deleteFromSelected(sel.id)" class="but"><i class="fas fa-times"></i></div>
-                      <div class="title">{{ sel.serviceName }}</div>
+                      <div class="title">{{ sel.parentServiceName + "/" + sel.serviceName }}</div>
                     </div>
                   </div>
                 </form>
