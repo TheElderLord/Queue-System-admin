@@ -3,5 +3,7 @@ export interface Branch {
   name: string
   description: string
   parentId: number | null
-  parentName: string
+  parentName: string,
+  lat:number,
+  lng:number
 }

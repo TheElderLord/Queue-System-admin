@@ -29,7 +29,8 @@ const headers = ref([
   { key: 'directed', title: 'Перенаправлен', align: 'center' },
   { key: 'redirectedWindowId', title: 'ID перенаправленного окна', align: 'center' },
   { key: 'rating', title: 'Рейтинг', align: 'center' },
-  { key: 'comment', title: 'Комментарий', align: 'center' }
+  { key: 'comment', title: 'Комментарий', align: 'center' },
+  { key: 'language', title: 'Язык', align: 'center' }
 ])
 const desserts = ref([] as Ticket[])
 
@@ -93,6 +94,7 @@ onMounted(() => {
               <td>{{ item.redirectedWindowId }}</td>
               <td>{{ item.rating }}</td>
               <td>{{ item.comment }}</td>
+              <td>{{ item.language }}</td>
             </tr>
           </template>
         </v-data-table>

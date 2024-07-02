@@ -10,19 +10,15 @@ const isCreateActive = ref<Boolean>(false)
 
 const isUpdateActive = ref<Boolean>(false)
 
-const branchObject = ref<Branch>({
-  id: 0, // Initialize with default values
-  name: '',
-  description: '',
-  parentId: null,
-  parentName: ''
-})
+const branchObject = ref({} as Branch)
 
 const headers = ref([
   { key: 'id', title: 'ID', align: 'center' },
   { key: 'name', title: 'Название', align: 'center' },
   { key: 'description', title: 'Описание', align: 'center' },
   { key: 'parentName', title: 'Родитель', align: 'center' },
+  { key: 'lat', title: 'Широта', align: 'center' },
+  { key: 'lng', title: 'Долгота', align: 'center' },
   { key: 'update', title: 'Обновить', align: 'center' },
   { key: 'delete', title: 'Удалить', align: 'center' }
 ])
@@ -64,6 +60,8 @@ const show = (id: number) => {
     branchObject.value = cloneDeep(selectedBranch)
     branchObject.value.parentId = selectedBranch.parentId // Ensure parentId is correctly set
     branchObject.value.id = id
+    branchObject.value.lat = selectedBranch.lat
+    branchObject.value.lng = selectedBranch.lng
     isCreateActive.value = true
     isUpdateActive.value = true
   } else {
@@ -100,7 +98,9 @@ const resetBranchObject = () => {
     name: '',
     description: '',
     parentId: null,
-    parentName: ''
+    parentName: '',
+    lat:0,
+    lng:0
   })
 }
 
@@ -162,6 +162,26 @@ onMounted(() => {
                       placeholder="Password"
                     />
                     <label for="floatingPassword">Описание</label>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input
+                      v-model="branchObject.lat"
+                      type="text"
+                      class="form-control"
+                      id="floatingPassword"
+                      placeholder="Password"
+                    />
+                    <label for="floatingPassword">Широта</label>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input
+                      v-model="branchObject.lng"
+                      type="text"
+                      class="form-control"
+                      id="floatingPassword"
+                      placeholder="Password"
+                    />
+                    <label for="floatingPassword">Долгота</label>
                   </div>
                   <div class="form-floating mb-3">
                     <select
@@ -230,6 +250,12 @@ onMounted(() => {
               </td>
               <td>
                 {{ item.parentName }}
+              </td>
+              <td>
+                {{ item.lat }}
+              </td>
+              <td>
+                {{ item.lng }}
               </td>
               <td>
                 <v-btn class="w-24" fab dark small color="green" @click="show(item.id)"
