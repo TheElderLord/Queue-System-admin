@@ -16,5 +16,6 @@ export interface Ticket {
   directed: boolean
   redirectedWindowId: number
   agent: string
-  rating: number
+  rating: number,
+  comment: string
 }

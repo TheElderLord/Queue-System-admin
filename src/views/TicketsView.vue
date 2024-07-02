@@ -28,7 +28,8 @@ const headers = ref([
   { key: 'bookingCode', title: 'Код бронирования', align: 'center' },
   { key: 'directed', title: 'Перенаправлен', align: 'center' },
   { key: 'redirectedWindowId', title: 'ID перенаправленного окна', align: 'center' },
-  { key: 'rating', title: 'Рейтинг', align: 'center' }
+  { key: 'rating', title: 'Рейтинг', align: 'center' },
+  { key: 'comment', title: 'Комментарий', align: 'center' }
 ])
 const desserts = ref([] as Ticket[])
 
@@ -69,23 +70,12 @@ onMounted(() => {
     <div class="role-body w-full">
       <v-card v-if="desserts" flat title="">
         <template v-slot:text>
-          <v-text-field
-            v-model="search"
-            label="Искать"
-            prepend-inner-icon="mdi-magnify"
-            single-line
-            variant="outlined"
-            hide-details
-          ></v-text-field>
+          <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
+            hide-details></v-text-field>
         </template>
 
-        <v-data-table
-          :headers="headers"
-          items-per-page-text="Элементов на странице"
-          :items="formattedDesserts"
-          :search="search"
-          no-data-text="Данные отсутствуют"
-        >
+        <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="formattedDesserts"
+          :search="search" no-data-text="Данные отсутствуют">
           <template v-slot:item="{ item }">
             <tr>
               <td>{{ item.id }}</td>
@@ -102,6 +92,7 @@ onMounted(() => {
               <td>{{ item.isDirected }}</td>
               <td>{{ item.redirectedWindowId }}</td>
               <td>{{ item.rating }}</td>
+              <td>{{ item.comment }}</td>
             </tr>
           </template>
         </v-data-table>
