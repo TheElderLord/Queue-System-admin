@@ -96,7 +96,7 @@ onMounted(() => {
   getServices()
   setInterval(() => {
     getServices()
-  }, 3000)
+  }, 10000)
 })
 </script>
 <template>

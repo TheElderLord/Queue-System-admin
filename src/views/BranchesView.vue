@@ -120,7 +120,7 @@ onMounted(() => {
   getBranches()
   setInterval(() => {
     getBranches()
-  }, 3000)
+  }, 10000)
 })
 </script>
 

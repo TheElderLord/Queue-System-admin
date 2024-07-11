@@ -135,7 +135,7 @@ onMounted(() => {
   setInterval(() => {
     getOperators()
     getRoles()
-  }, 3000)
+  }, 10000)
 })
 </script>
 

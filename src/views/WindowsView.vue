@@ -103,7 +103,7 @@ onMounted(() => {
   setInterval(() => {
     getWindows()
     getBranches()
-  }, 3000)
+  }, 10000)
 })
 </script>
 <template>

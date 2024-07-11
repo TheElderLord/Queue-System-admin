@@ -92,7 +92,7 @@ onMounted(() => {
 
   setInterval(() => {
     getSessions()
-  }, 3000)
+  }, 10000)
 })
 </script>
 
