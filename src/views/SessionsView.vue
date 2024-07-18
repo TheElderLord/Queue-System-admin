@@ -50,8 +50,10 @@ const formatTimeDifference = (startTime: string, endTime: string | null) => {
   return `${String(diffHrs).padStart(2, '0')}:${String(diffMins).padStart(2, '0')}:${String(diffSecs).padStart(2, '0')}`
 }
 const stop = async (id: number) => {
-  await stopASession(id)
-  await getSessions()
+  if (confirm("Вы уверены в своих действиях?")) {
+    await stopASession(id)
+    await getSessions()
+  }
 }
 
 const formattedDesserts = computed(() => {
@@ -80,8 +82,10 @@ const formattedDesserts = computed(() => {
   })
 })
 const deleteSession = async (id: number) => {
-  await deleteRequest(id);
-  await getSessions();
+  if (confirm("Вы уверены в своих действиях?")) {
+    await deleteRequest(id);
+    await getSessions();
+  }
 }
 
 onMounted(() => {

@@ -88,8 +88,10 @@ const updateBranch = async () => {
 }
 
 const deleteBranch = async (id: number) => {
-  await removeBranch(id)
-  await getBranches()
+  if (confirm("Вы уверены?")) {
+    await removeBranch(id)
+    await getBranches()
+  }
 }
 
 const resetBranchObject = () => {
@@ -99,8 +101,8 @@ const resetBranchObject = () => {
     description: '',
     parentId: null,
     parentName: '',
-    lat:0,
-    lng:0
+    lat: 0,
+    lng: 0
   })
 }
 
@@ -131,12 +133,7 @@ onMounted(() => {
       <div class="createDiv">
         <v-dialog v-model="isCreateActive" max-width="500">
           <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-              v-bind="activatorProps"
-              color="surface-variant"
-              text="Создать"
-              variant="flat"
-            ></v-btn>
+            <v-btn v-bind="activatorProps" color="surface-variant" text="Создать" variant="flat"></v-btn>
           </template>
 
           <template v-slot:default="{ isActive }">
@@ -144,62 +141,32 @@ onMounted(() => {
               <v-card-text>
                 <form>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="branchObject.name"
-                      type="text"
-                      class="form-control"
-                      id="floatingInput"
-                      placeholder="name@example.com"
-                    />
+                    <input v-model="branchObject.name" type="text" class="form-control" id="floatingInput"
+                      placeholder="name@example.com" />
                     <label for="floatingInput">Название</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="branchObject.description"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="branchObject.description" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Описание</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="branchObject.lat"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="branchObject.lat" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Широта</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="branchObject.lng"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="branchObject.lng" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Долгота</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <select
-                      v-model="branchObject.parentId"
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
+                    <select v-model="branchObject.parentId" class="form-select" aria-label="Default select example">
                       <option :value="null">Нет родительского отделения</option>
-                      <option
-                        v-for="branch in desserts"
-                        :key="branch.id"
-                        :value="branch.id"
-                        :disabled="
-                          branch.id === branchObject.id ||
-                          branchObject.parentId === branch.id ||
-                          isChild(branch, branchObject.id)
-                        "
-                      >
+                      <option v-for="branch in desserts" :key="branch.id" :value="branch.id" :disabled="branch.id === branchObject.id ||
+                        branchObject.parentId === branch.id ||
+                        isChild(branch, branchObject.id)
+                        ">
                         {{ branch.name }}
                       </option>
                     </select>
@@ -220,23 +187,12 @@ onMounted(() => {
 
       <v-card flat title="">
         <template v-slot:text>
-          <v-text-field
-            v-model="search"
-            label="Искать"
-            prepend-inner-icon="mdi-magnify"
-            single-line
-            variant="outlined"
-            hide-details
-          ></v-text-field>
+          <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
+            hide-details></v-text-field>
         </template>
 
-        <v-data-table
-          :headers="headers"
-          items-per-page-text="Элементов на странице"
-          :items="desserts"
-          :search="search"
-          no-data-text="Данные отсутствуют"
-        >
+        <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="desserts" :search="search"
+          no-data-text="Данные отсутствуют">
           <template v-slot:item="{ item }">
             <tr>
               <td>
@@ -258,14 +214,10 @@ onMounted(() => {
                 {{ item.lng }}
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="green" @click="show(item.id)"
-                  >Изменить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="green" @click="show(item.id)">Изменить</v-btn>
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="red" @click="deleteBranch(item.id)"
-                  >Удалить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="red" @click="deleteBranch(item.id)">Удалить</v-btn>
               </td>
             </tr>
           </template>

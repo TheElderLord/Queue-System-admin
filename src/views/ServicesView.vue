@@ -72,8 +72,10 @@ const updateService = async () => {
   // console.log(branchObject.value);
 }
 const deleteService = async (id: number) => {
-  await removeService(id)
-  await getServices()
+  if (confirm("Вы уверены в своих действиях?")) {
+    await removeService(id)
+    await getServices()
+  }
 }
 const resetServiceObject = () => {
   serviceObject.value = {
@@ -106,12 +108,7 @@ onMounted(() => {
       <div class="createDiv">
         <v-dialog v-model="isCreateActive" max-width="500">
           <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-              v-bind="activatorProps"
-              color="surface-variant"
-              text="Создать"
-              variant="flat"
-            ></v-btn>
+            <v-btn v-bind="activatorProps" color="surface-variant" text="Создать" variant="flat"></v-btn>
           </template>
 
           <template v-slot:default>
@@ -119,31 +116,17 @@ onMounted(() => {
               <v-card-text>
                 <form>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="serviceObject.name"
-                      type="text"
-                      class="form-control"
-                      id="floatingInput"
-                      placeholder="name@example.com"
-                    />
+                    <input v-model="serviceObject.name" type="text" class="form-control" id="floatingInput"
+                      placeholder="name@example.com" />
                     <label for="floatingInput">Название</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="serviceObject.description"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="serviceObject.description" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Описание</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <select
-                      v-model="serviceObject.parentId"
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
+                    <select v-model="serviceObject.parentId" class="form-select" aria-label="Default select example">
                       <option value="0" disabled selected>Выберите родительскую услугу</option>
                       <option :value="parent.id" v-for="parent in desserts" :key="parent.id">
                         {{ parent.name }}
@@ -151,33 +134,18 @@ onMounted(() => {
                     </select>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="serviceObject.maxServTime"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="serviceObject.maxServTime" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Максимальное время обслуживания</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="serviceObject.maxWaitTime"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="serviceObject.maxWaitTime" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Максимальное время ожидания</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="serviceObject.priority"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="serviceObject.priority" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Приоритет</label>
                   </div>
                 </form>
@@ -195,23 +163,12 @@ onMounted(() => {
       </div>
       <v-card flat title="">
         <template v-slot:text>
-          <v-text-field
-            v-model="search"
-            label="Искать"
-            prepend-inner-icon="mdi-magnify"
-            single-line
-            variant="outlined"
-            hide-details
-          ></v-text-field>
+          <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
+            hide-details></v-text-field>
         </template>
 
-        <v-data-table
-          :headers="headers"
-          items-per-page-text="Элементов на странице"
-          :items="desserts"
-          :search="search"
-          no-data-text="Данные отсутствуют"
-        >
+        <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="desserts" :search="search"
+          no-data-text="Данные отсутствуют">
           <template v-slot:item="{ item }">
             <tr>
               <td>
@@ -236,14 +193,10 @@ onMounted(() => {
                 {{ item.priority }}
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="red" @click="show(item.id)"
-                  >Изменить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="red" @click="show(item.id)">Изменить</v-btn>
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="red" @click="deleteService(item.id)"
-                  >Удалить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="red" @click="deleteService(item.id)">Удалить</v-btn>
               </td>
             </tr>
             <!-- <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> -->

@@ -78,8 +78,10 @@ const updateWindow = async () => {
   // console.log(branchObject.value);
 }
 const deleteWindow = async (id: number) => {
-  await removeWindow(id)
-  await getWindows()
+  if (confirm("Вы уверены в своих действиях?")) {
+    await removeWindow(id)
+    await getWindows()
+  }
 }
 const resetWindowObject = () => {
   WindowObject.value = {
@@ -113,12 +115,7 @@ onMounted(() => {
       <div class="createDiv">
         <v-dialog v-model="isCreateActive" max-width="500">
           <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-              v-bind="activatorProps"
-              color="surface-variant"
-              text="Создать"
-              variant="flat"
-            ></v-btn>
+            <v-btn v-bind="activatorProps" color="surface-variant" text="Создать" variant="flat"></v-btn>
           </template>
 
           <template v-slot:default>
@@ -126,42 +123,23 @@ onMounted(() => {
               <v-card-text>
                 <form>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="WindowObject.name"
-                      type="text"
-                      class="form-control"
-                      id="floatingInput"
-                      placeholder="name@example.com"
-                    />
+                    <input v-model="WindowObject.name" type="text" class="form-control" id="floatingInput"
+                      placeholder="name@example.com" />
                     <label for="floatingInput">Название</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="WindowObject.number"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="WindowObject.number" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Номер</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="WindowObject.description"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="WindowObject.description" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Описание</label>
                   </div>
 
                   <div class="form-floating mb-3">
-                    <select
-                      v-model="WindowObject.branchId"
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
+                    <select v-model="WindowObject.branchId" class="form-select" aria-label="Default select example">
                       <option value="0" selected>Выберите Отделение</option>
                       <option :value="branch.id" v-for="branch in branches" :key="branch.id">
                         {{ branch.name }}
@@ -183,23 +161,12 @@ onMounted(() => {
       </div>
       <v-card v-if="desserts" flat title="">
         <template v-slot:text>
-          <v-text-field
-            v-model="search"
-            label="Искать"
-            prepend-inner-icon="mdi-magnify"
-            single-line
-            variant="outlined"
-            hide-details
-          ></v-text-field>
+          <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
+            hide-details></v-text-field>
         </template>
 
-        <v-data-table
-          :headers="headers"
-          items-per-page-text="Элементов на странице"
-          :items="desserts"
-          :search="search"
-          no-data-text="Данные отсутствуют"
-        >
+        <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="desserts" :search="search"
+          no-data-text="Данные отсутствуют">
           <template v-slot:item="{ item }">
             <tr>
               <td>
@@ -222,14 +189,10 @@ onMounted(() => {
                 <i v-else class="fas fa-circle text-red-500"></i>
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="green" @click="show(item.id)"
-                  >Изменить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="green" @click="show(item.id)">Изменить</v-btn>
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="red" @click="deleteWindow(item.id)"
-                  >Удалить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="red" @click="deleteWindow(item.id)">Удалить</v-btn>
               </td>
             </tr>
             <!-- <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> -->

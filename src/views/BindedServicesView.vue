@@ -89,8 +89,10 @@ const updateRoleService = async () => {
   // console.log(branchObject.value);
 }
 const deleteRoleService = async (id: number) => {
-  await removeRoleService(id)
-  await getRoleServices()
+  if (confirm("Вы уверены?")) {
+    await removeRoleService(id)
+    await getRoleServices()
+  }
 }
 const resetRoleServiceObject = () => {
   RoleServiceObject.value = {
@@ -129,12 +131,7 @@ onMounted(() => {
       <div class="createDiv">
         <v-dialog v-model="isCreateActive" max-width="500">
           <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-              v-bind="activatorProps"
-              color="surface-variant"
-              text="Создать"
-              variant="flat"
-            ></v-btn>
+            <v-btn v-bind="activatorProps" color="surface-variant" text="Создать" variant="flat"></v-btn>
           </template>
 
           <template v-slot:default>
@@ -158,11 +155,8 @@ onMounted(() => {
                                     </div> -->
 
                   <div class="form-floating mb-3">
-                    <select
-                      v-model="RoleServiceObject.serviceId"
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
+                    <select v-model="RoleServiceObject.serviceId" class="form-select"
+                      aria-label="Default select example">
                       <option value="0" selected>Выберите услугу</option>
                       <option :value="service.id" v-for="service in services" :key="service.id">
                         {{ service.name }}
@@ -170,11 +164,8 @@ onMounted(() => {
                     </select>
                   </div>
                   <div class="form-floating mb-3">
-                    <select
-                      v-model="RoleServiceObject.branchId"
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
+                    <select v-model="RoleServiceObject.branchId" class="form-select"
+                      aria-label="Default select example">
                       <option value="0" selected>Выберите Отделение</option>
                       <option :value="branch.id" v-for="branch in branches" :key="branch.id">
                         {{ branch.name }}
@@ -182,11 +173,7 @@ onMounted(() => {
                     </select>
                   </div>
                   <div class="form-floating mb-3">
-                    <select
-                      v-model="RoleServiceObject.roleId"
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
+                    <select v-model="RoleServiceObject.roleId" class="form-select" aria-label="Default select example">
                       <option value="0" selected>Выберите роль</option>
                       <option :value="role.id" v-for="role in roles" :key="role.id">
                         {{ role.name }}
@@ -209,23 +196,12 @@ onMounted(() => {
 
       <v-card v-if="desserts" flat title="">
         <template v-slot:text>
-          <v-text-field
-            v-model="search"
-            label="Искать"
-            prepend-inner-icon="mdi-magnify"
-            single-line
-            variant="outlined"
-            hide-details
-          ></v-text-field>
+          <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
+            hide-details></v-text-field>
         </template>
 
-        <v-data-table
-          :headers="headers"
-          items-per-page-text="Элементов на странице"
-          :items="desserts"
-          :search="search"
-          no-data-text="Данные отсутствуют"
-        >
+        <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="desserts" :search="search"
+          no-data-text="Данные отсутствуют">
           <template v-slot:item="{ item }">
             <tr>
               <td>
@@ -241,14 +217,10 @@ onMounted(() => {
                 {{ item.roleName }}
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="red" @click="show(item.id)"
-                  >Изменить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="red" @click="show(item.id)">Изменить</v-btn>
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="red" @click="deleteRoleService(item.id)"
-                  >Удалить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="red" @click="deleteRoleService(item.id)">Удалить</v-btn>
               </td>
             </tr>
             <!-- <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> -->

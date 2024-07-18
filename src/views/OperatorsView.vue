@@ -106,8 +106,11 @@ const updateOperator = async () => {
 }
 
 const deleteOperator = async (id: number) => {
-  await removeOperator(id)
-  await getOperators()
+  if (confirm("Вы уверены в своих действиях?")) {
+    await removeOperator(id)
+    await getOperators()
+  }
+
 }
 
 const resetOperatorObject = () => {
@@ -146,12 +149,7 @@ onMounted(() => {
       <div class="createDiv">
         <v-dialog v-model="isCreateActive" max-width="500">
           <template v-slot:activator="{ props: activatorProps }">
-            <v-btn
-              v-bind="activatorProps"
-              color="surface-variant"
-              text="Создать"
-              variant="flat"
-            ></v-btn>
+            <v-btn v-bind="activatorProps" color="surface-variant" text="Создать" variant="flat"></v-btn>
           </template>
 
           <template v-slot:default>
@@ -159,51 +157,27 @@ onMounted(() => {
               <v-card-text>
                 <form>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="operatorObject.name"
-                      type="text"
-                      class="form-control"
-                      id="floatingInput"
-                      placeholder="name@example.com"
-                    />
+                    <input v-model="operatorObject.name" type="text" class="form-control" id="floatingInput"
+                      placeholder="name@example.com" />
                     <label for="floatingInput">Имя</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="operatorObject.lastname"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="operatorObject.lastname" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Фамилия</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="operatorObject.login"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="operatorObject.login" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Имя пользователя</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input
-                      v-model="operatorObject.password"
-                      type="text"
-                      class="form-control"
-                      id="floatingPassword"
-                      placeholder="Password"
-                    />
+                    <input v-model="operatorObject.password" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
                     <label for="floatingPassword">Пароль</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <select
-                      v-model="operatorObject.roleId"
-                      class="form-select"
-                      aria-label="Default select example"
-                    >
+                    <select v-model="operatorObject.roleId" class="form-select" aria-label="Default select example">
                       <option value="0" disabled selected>Выберите роль</option>
                       <option :value="role.id" v-for="role in roles" :key="role.id">
                         {{ role.name }}
@@ -215,18 +189,9 @@ onMounted(() => {
 
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn
-                  v-if="isUpdateActive"
-                  :disabled="!isValidOperatorForm()"
-                  @click="updateOperator()"
-                  text="Изменить"
-                ></v-btn>
-                <v-btn
-                  v-else
-                  :disabled="!isValidOperatorForm()"
-                  @click="createOperator()"
-                  text="Сохранить"
-                ></v-btn>
+                <v-btn v-if="isUpdateActive" :disabled="!isValidOperatorForm()" @click="updateOperator()"
+                  text="Изменить"></v-btn>
+                <v-btn v-else :disabled="!isValidOperatorForm()" @click="createOperator()" text="Сохранить"></v-btn>
                 <v-btn text="Закрыть" @click="close()"></v-btn>
               </v-card-actions>
             </v-card>
@@ -235,23 +200,12 @@ onMounted(() => {
       </div>
       <v-card flat title="">
         <template v-slot:text>
-          <v-text-field
-            v-model="search"
-            label="Искать"
-            prepend-inner-icon="mdi-magnify"
-            single-line
-            variant="outlined"
-            hide-details
-          ></v-text-field>
+          <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
+            hide-details></v-text-field>
         </template>
 
-        <v-data-table
-          :headers="headers"
-          items-per-page-text="Элементов на странице"
-          :items="desserts"
-          :search="search"
-          no-data-text="Данные отсутствуют"
-        >
+        <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="desserts" :search="search"
+          no-data-text="Данные отсутствуют">
           <template v-slot:item="{ item }">
             <tr>
               <td>{{ item.id }}</td>
@@ -263,14 +217,10 @@ onMounted(() => {
                 <i v-else class="fas fa-circle text-red-500"></i>
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="green" @click="show(item.id)"
-                  >Изменить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="green" @click="show(item.id)">Изменить</v-btn>
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="red" @click="deleteOperator(item.id)"
-                  >Удалить</v-btn
-                >
+                <v-btn class="w-24" fab dark small color="red" @click="deleteOperator(item.id)">Удалить</v-btn>
               </td>
             </tr>
           </template>

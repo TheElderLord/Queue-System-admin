@@ -86,8 +86,10 @@ const updateRole = async () => {
   // console.log(branchObject.value);
 }
 const deleteRole = async (id: number) => {
-  await removeRole(id)
-  await getRoles()
+  if (confirm("Вы уверены в своих действиях?")) {
+    await removeRole(id)
+    await getRoles()
+  }
 }
 const resetRoleObject = () => {
   roleObject.value = {
