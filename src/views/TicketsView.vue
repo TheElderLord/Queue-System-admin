@@ -5,14 +5,24 @@ import { fetchTickets } from '../utils/tickets.utils'
 
 const search = ref('' as string)
 
-const ticketStatusTranslations = {
+interface ticketStatus{
+  NEW: string,
+  BOOKED: string,
+  INSERVICE: string,
+  COMPLETED: string,
+  MISSED:string,
+  ZOMBIE: string
+}
+
+const ticketStatusTranslations: Record<string, string> = {
   NEW: 'Новый',
   BOOKED: 'Бронированный',
   INSERVICE: 'Обслуживающийся',
   COMPLETED: 'Завершенный',
   MISSED: 'Не подошедший',
   ZOMBIE: 'Зомби'
-}
+  // Additional statuses if necessary
+};
 
 const headers = ref([
   { key: 'id', title: 'ID', align: 'center' },
@@ -40,7 +50,7 @@ const getRoles = async () => {
 
 const formattedDesserts = computed(() => {
   return desserts.value.map((ticket) => {
-    const translatedTicketStatus = ticketStatusTranslations[ticket.status] || ticket.status
+    const translatedTicketStatus = ticketStatusTranslations[ticket.status] || ticket.status;
 
     return {
       ...ticket,
