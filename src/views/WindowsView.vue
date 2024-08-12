@@ -140,7 +140,7 @@ onMounted(() => {
 
                   <div class="form-floating mb-3">
                     <select v-model="WindowObject.branchId" class="form-select" aria-label="Default select example">
-                      <option value="0" selected>Выберите Отделение</option>
+                      <option value="null" selected>Выберите Отделение</option>
                       <option :value="branch.id" v-for="branch in branches" :key="branch.id">
                         {{ branch.name }}
                       </option>

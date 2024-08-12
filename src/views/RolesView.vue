@@ -166,7 +166,7 @@ onMounted(() => {
                   <div class="form-floating mb-3">
                     <select class="form-select" aria-label="Default select example" v-model="selectedService"
                       @change="selectServices()">
-                      <option value="0">Выберите услуги</option>
+                      <option value="null">Выберите услуги</option>
                       <option v-for="service in services" :key="service.id" :value="service.id">
                         {{ service.parentName + "/" + service.name }}
                       </option>

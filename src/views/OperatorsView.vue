@@ -178,7 +178,7 @@ onMounted(() => {
                   </div>
                   <div class="form-floating mb-3">
                     <select v-model="operatorObject.roleId" class="form-select" aria-label="Default select example">
-                      <option value="0" disabled selected>Выберите роль</option>
+                      <option value="null"  selected>Выберите роль</option>
                       <option :value="role.id" v-for="role in roles" :key="role.id">
                         {{ role.name }}
                       </option>

@@ -157,7 +157,7 @@ onMounted(() => {
                   <div class="form-floating mb-3">
                     <select v-model="RoleServiceObject.serviceId" class="form-select"
                       aria-label="Default select example">
-                      <option value="0" selected>Выберите услугу</option>
+                      <option value="null" selected>Выберите услугу</option>
                       <option :value="service.id" v-for="service in services" :key="service.id">
                         {{ service.name }}
                       </option>
@@ -166,7 +166,7 @@ onMounted(() => {
                   <div class="form-floating mb-3">
                     <select v-model="RoleServiceObject.branchId" class="form-select"
                       aria-label="Default select example">
-                      <option value="0" selected>Выберите Отделение</option>
+                      <option value="null" selected>Выберите Отделение</option>
                       <option :value="branch.id" v-for="branch in branches" :key="branch.id">
                         {{ branch.name }}
                       </option>
@@ -174,7 +174,7 @@ onMounted(() => {
                   </div>
                   <div class="form-floating mb-3">
                     <select v-model="RoleServiceObject.roleId" class="form-select" aria-label="Default select example">
-                      <option value="0" selected>Выберите роль</option>
+                      <option value="null" selected>Выберите роль</option>
                       <option :value="role.id" v-for="role in roles" :key="role.id">
                         {{ role.name }}
                       </option>
