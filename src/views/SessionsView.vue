@@ -5,7 +5,7 @@ import { deleteRequest, fetchSessions, stopASession } from '../utils/sessions.ut
 
 const search = ref('' as string)
 
-const sessionStatusTranslations = {
+const sessionStatusTranslations: Record<string, string> = {
   ONNLINE: 'В сети',
   BREAK: 'Перерыв',
   FORCED: 'Принудительно',
@@ -58,6 +58,7 @@ const stop = async (id: number) => {
 
 const formattedDesserts = computed(() => {
   return desserts.value.map((ticket) => {
+
     const workingTime = formatTimeDifference(ticket.startTime, ticket.endTime)
 
     const formatDate = (date: Date) => {

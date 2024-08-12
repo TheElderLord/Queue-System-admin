@@ -5,15 +5,6 @@ import { fetchTickets } from '../utils/tickets.utils'
 
 const search = ref('' as string)
 
-interface ticketStatus{
-  NEW: string,
-  BOOKED: string,
-  INSERVICE: string,
-  COMPLETED: string,
-  MISSED:string,
-  ZOMBIE: string
-}
-
 const ticketStatusTranslations: Record<string, string> = {
   NEW: 'Новый',
   BOOKED: 'Бронированный',
