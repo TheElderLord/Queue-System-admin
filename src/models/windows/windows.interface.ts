@@ -1,4 +1,4 @@
-import type { WindowService } from "./window-service.interface"
+import type { windowServiceModelDtos } from "./window-service.interface"
 
 export interface Window {
   id: number | undefined | null,
@@ -8,5 +8,5 @@ export interface Window {
   name: string | undefined | null,
   description: string | undefined | null,
   active: boolean | undefined | null,
-  windowServices: WindowService[] | undefined | null
+  windowServiceModelDtos: windowServiceModelDtos[] | undefined | null
 }

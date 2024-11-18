@@ -4,7 +4,7 @@ import type { Window } from '../models/windows/windows.interface'
 import { fetchWindows, postWindow, putWindow, removeWindow } from '../utils/windows.utils'
 import { onMounted, ref, watch } from 'vue'
 import { fetchServices } from '../utils/services.utils';
-import type { WindowService } from '../models/windows/window-service.interface';
+import type { windowServiceModelDtos } from '../models/windows/window-service.interface';
 import { postWindowService } from '../utils/window-services.utils';
 
 // const search = ref('' as string)
@@ -19,7 +19,8 @@ import { postWindowService } from '../utils/window-services.utils';
 const desserts = ref([] as Window[]);
 
 const services = ref([] as Service[])
-const selectedServices = ref([] as WindowService[]);
+const selectedServices = ref([] as windowServiceModelDtos[]);
+
 const selectedService = ref(0 as number);
 
 const isCreateActive = ref<boolean>(false)
@@ -33,7 +34,7 @@ const windowObject = ref<Window>({
   name: null,
   description: null,
   active: false,
-  windowServices: [],
+  windowServiceModelDtos: [],
 })
 
 const getServices = async () => {
@@ -64,7 +65,8 @@ const show = async (id: number) => {
   if (selectedRole) {
     // Assign the found branch to branchObject
     windowObject.value = { ...selectedRole }
-    selectedServices.value = windowObject.value.windowServices;
+    console.log(windowObject.value);
+    selectedServices.value = windowObject.value.windowServiceModelDtos;
     windowObject.value.id = id
     isCreateActive.value = true
     isUpdateActive.value = true
@@ -107,10 +109,14 @@ const resetRoleObject = () => {
 }
 const selectServices = () => {
   const service = services.value.find(s => s.id === selectedService.value);
-  selectedServices.value.push({
-    serviceId: service?.id,
-    serviceName: service?.name
-  })
+  console.log(service)
+  console.log(selectedServices.value);
+  if (service) {
+    selectedServices.value.push({
+      serviceId: service?.id,
+      serviceName: service?.name
+    })
+  };
 
   // if (service && !selectedServices.value.some(s => s.id === service.id)) {
   //   selectedServices.value.push({
@@ -122,7 +128,7 @@ const deleteFromSelected = (id: number) => {
   selectedServices.value = selectedServices.value.filter(e => e.id !== id);
 
 }
-const addServiceToWindow = async (id: number | null | undefined, services: WindowService[]) => {
+const addServiceToWindow = async (id: number | null | undefined, services: windowServiceModelDtos[]) => {
   await postWindowService(id, services)
 }
 watch(isCreateActive, (newValue) => {
@@ -140,7 +146,7 @@ onMounted(() => {
 </script>
 <template>
   <div class="role-container">
-    <div class="role-title text-3xl text-center">Роли</div>
+    <div class="role-title text-3xl text-center">Окна</div>
     <div class="role-body w-full">
       <div class="createDiv">
         <v-dialog v-model="isCreateActive" max-width="500">
@@ -162,17 +168,17 @@ onMounted(() => {
                       placeholder="Password" />
                     <label for="floatingPassword">Описание</label>
                   </div>
-                  <div class="form-floating mb-3">
+                  <!-- <div class="form-floating mb-3">
                     <input v-model="windowObject.priority" type="text" class="form-control" id="floatingPassword"
                       placeholder="Password" />
                     <label for="floatingPassword">Приоритет</label>
-                  </div>
+                  </div> -->
                   <div class="form-floating mb-3">
                     <select class="form-select" aria-label="Default select example" v-model="selectedService"
                       @change="selectServices()">
                       <option value="null">Выберите услуги</option>
                       <option v-for="service in services" :key="service.id" :value="service.id">
-                        {{ service.parentName + "/" + service.name }}
+                        {{ service.name }}
                       </option>
                     </select>
                     <label for="floatingPassword">Услуги</label>
@@ -180,7 +186,7 @@ onMounted(() => {
                   <div v-if="selectedServices" class="selects ">
                     <div v-for="sel in selectedServices" :key="sel.id" class="select ">
                       <div @click="deleteFromSelected(sel.id)" class="but"><i class="fas fa-times"></i></div>
-                      <div class="title">{{ sel.parentServiceName + "/" + sel.serviceName }}</div>
+                      <div class="title">{{ sel.serviceName }}</div>
                     </div>
                   </div>
                 </form>
@@ -260,34 +266,34 @@ onMounted(() => {
               Приоритет
             </div>
           </div> -->
-        <div v-for="roleService in desserts" :key="roleService.id" class="roleService">
+        <div v-for="windowService in desserts" :key="windowService.id" class="roleService">
           <div class="static">
-            <div class="toggle" @click="roleService.show = !roleService.show">
+            <div class="toggle" @click="windowService.show = !windowService.show">
               <i class="fas fa-arrow-down"></i>
 
             </div>
             <div class="id">
-              {{ roleService.id }}
+              {{ windowService.id }}
             </div>
             <div class="name">
-              {{ roleService.name }}
+              {{ windowService.name }}
             </div>
             <div class="description">
-              {{ roleService.description }}
+              {{ windowService.description }}
             </div>
-            <div class="priority">
-              {{ roleService.priority }}
+            <!-- <div class="priority">
+              {{ windowService.priority }}
+            </div> -->
+            <div class="change">
+              <v-btn class="w-24" fab dark small color="green" @click="show(windowService.id)">Изменить</v-btn>
             </div>
             <div class="change">
-              <v-btn class="w-24" fab dark small color="green" @click="show(roleService.id)">Изменить</v-btn>
-            </div>
-            <div class="change">
-              <v-btn class="w-24" fab dark small color="red" @click="deleteRole(roleService.id)">Удалить</v-btn>
+              <v-btn class="w-24" fab dark small color="red" @click="deleteRole(windowService.id)">Удалить</v-btn>
             </div>
           </div>
-          <div v-if="roleService.show" class="hidden-block">
-            <div v-for="rs in roleService.roleServices" :key="rs.id" class="hid text-center py-2 text-xl">
-              {{ rs.parentServiceName + "/" + rs.serviceName }}
+          <div v-if="windowService.show" class="hidden-block">
+            <div v-for="rs in windowService.windowServices" :key="rs.id" class="hid text-center py-2 text-xl">
+              {{ rs.serviceName }}
             </div>
           </div>
 

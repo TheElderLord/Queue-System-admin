@@ -1,4 +1,4 @@
-export interface WindowService {
+export interface windowServiceModelDtos {
     id: number
     // branchId: number
     // branchName: string
