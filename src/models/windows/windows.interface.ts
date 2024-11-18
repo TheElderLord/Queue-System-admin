@@ -1,9 +1,12 @@
+import type { WindowService } from "./window-service.interface"
+
 export interface Window {
-  id: number
-  branchId: number
-  branchName: string
-  number: number
-  name: string
-  description: string
-  active: boolean
+  id: number | undefined | null,
+  branchId: number | undefined | null,
+  branchName: string | undefined | null,
+  number: number | undefined | null,
+  name: string | undefined | null,
+  description: string | undefined | null,
+  active: boolean | undefined | null,
+  windowServices: WindowService[] | undefined | null
 }

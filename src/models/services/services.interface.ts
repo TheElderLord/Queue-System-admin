@@ -1,10 +1,10 @@
 export interface Service {
-  id: number
-  name: string
-  description: string
-  parentName: string
-  priority: number
-  parentId: number | null
-  maxServTime: number | null
-  maxWaitTime: number | null
+  id: number | undefined
+  name: string | undefined
+  description: string | undefined
+  parentName: string | undefined
+  priority: number | undefined
+  parentId: number | null | undefined
+  maxServTime: number | null | undefined
+  maxWaitTime: number | null | undefined
 }

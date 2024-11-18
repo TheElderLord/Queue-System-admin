@@ -1,62 +1,71 @@
 <script lang="ts" setup>
+import type { Service } from '../models/services/services.interface';
 import type { Window } from '../models/windows/windows.interface'
-import { onMounted, ref, watch } from 'vue'
 import { fetchWindows, postWindow, putWindow, removeWindow } from '../utils/windows.utils'
-import type { Branch } from '@/models/branches/branches.interface'
-import { fetchBranches } from '@/utils/branches.utils'
+import { onMounted, ref, watch } from 'vue'
+import { fetchServices } from '../utils/services.utils';
+import type { WindowService } from '../models/windows/window-service.interface';
+import { postWindowService } from '../utils/window-services.utils';
 
-const search = ref('' as string)
-const headers = ref([
-  { key: 'id', title: 'ID', align: 'center' },
-  { key: 'name', title: 'Название', align: 'center' },
-  { key: 'number', title: 'Номер', align: 'center' },
-  { key: 'branchName', title: 'Отделение', align: 'center' },
-  { key: 'description', title: 'Описание', align: 'center' },
-  { key: 'active', title: 'Активен', align: 'center' },
-  { key: 'action', title: 'Изменить', align: 'center' },
-  { key: 'action', title: 'Удалить', align: 'center' }
-])
-const desserts = ref([] as Window[])
-const branches = ref([] as Branch[])
+// const search = ref('' as string)
+// const headers = ref([
+//   { key: 'id', title: 'ID', align: 'center' },
+//   { key: 'name', title: 'Название', align: 'center' },
+//   { key: 'description', title: 'Описание', align: 'center' },
+//   { key: 'priority', title: 'Приоритет', align: 'center' },
+//   { key: 'update', title: 'Изменить', align: 'center' },
+//   { key: 'action', title: 'Действие', align: 'center' }
+// ])
+const desserts = ref([] as Window[]);
+
+const services = ref([] as Service[])
+const selectedServices = ref([] as WindowService[]);
+const selectedService = ref(0 as number);
 
 const isCreateActive = ref<boolean>(false)
 const isUpdateActive = ref<boolean>(false)
 
-const WindowObject = ref<Window>({
+const windowObject = ref<Window>({
   id: 0,
   branchId: 0,
-  branchName: '',
-  number: 0,
-  name: '',
-  description: '',
-  active: false
+  branchName: null,
+  number: null,
+  name: null,
+  description: null,
+  active: false,
+  windowServices: [],
 })
 
-const getBranches = async () => {
-  branches.value = await fetchBranches()
+const getServices = async () => {
+  services.value = await fetchServices();
 }
+
 const getWindows = async () => {
   desserts.value = await fetchWindows()
-  // console.log(desserts.value)
+  console.log(desserts.value)
 }
+
 const createWindow = async () => {
-  if (!WindowObject.value.name) {
+  if (!windowObject.value.name) {
     alert('Невозможно создать окно без названия')
     return
   }
   // console.log(branchObject.value);
-  await postWindow(WindowObject.value)
-  getWindows()
+  const role = await postWindow(windowObject.value)
+  console.log(selectedServices.value)
+  await addServiceToWindow(role.id, selectedServices.value);
+  await getWindows()
   isCreateActive.value = false
-  resetWindowObject()
+  resetRoleObject()
 }
 const show = async (id: number) => {
-  const selectedWindow = desserts.value.find((e) => e.id === id)
+  const selectedRole = desserts.value.find((e) => e.id === id)
   // Check if the selected branch is defined
-  if (selectedWindow) {
+  if (selectedRole) {
     // Assign the found branch to branchObject
-    WindowObject.value = { ...selectedWindow }
-    WindowObject.value.id = id
+    windowObject.value = { ...selectedRole }
+    selectedServices.value = windowObject.value.windowServices;
+    windowObject.value.id = id
     isCreateActive.value = true
     isUpdateActive.value = true
   } else {
@@ -69,49 +78,70 @@ const close = () => {
   isUpdateActive.value = false
 }
 const updateWindow = async () => {
-  console.log(WindowObject.value)
-  await putWindow(WindowObject.value.id, WindowObject.value)
+  console.log(windowObject.value)
+  await putWindow(windowObject.value.id, windowObject.value)
+  await addServiceToWindow(windowObject.value.id, selectedServices.value)
   await getWindows()
-  resetWindowObject()
+  resetRoleObject()
   isCreateActive.value = false
   isUpdateActive.value = false
   // console.log(branchObject.value);
 }
-const deleteWindow = async (id: number) => {
+const deleteRole = async (id: number) => {
   if (confirm("Вы уверены в своих действиях?")) {
     await removeWindow(id)
     await getWindows()
   }
 }
-const resetWindowObject = () => {
-  WindowObject.value = {
+const resetRoleObject = () => {
+  windowObject.value = {
     id: 0,
     branchId: 0,
-    branchName: '',
-    number: 0,
-    name: '',
-    description: '',
-    active: false
+    branchName: null,
+    number: null,
+    name: null,
+    description: null,
+    active: false,
+    windowServices: [],
   }
+}
+const selectServices = () => {
+  const service = services.value.find(s => s.id === selectedService.value);
+  selectedServices.value.push({
+    serviceId: service?.id,
+    serviceName: service?.name
+  })
+
+  // if (service && !selectedServices.value.some(s => s.id === service.id)) {
+  //   selectedServices.value.push({
+  //     serviceId: service.id
+  //   });
+  // }
+}
+const deleteFromSelected = (id: number) => {
+  selectedServices.value = selectedServices.value.filter(e => e.id !== id);
+
+}
+const addServiceToWindow = async (id: number | null | undefined, services: WindowService[]) => {
+  await postWindowService(id, services)
 }
 watch(isCreateActive, (newValue) => {
   if (!newValue) {
-    resetWindowObject()
+    resetRoleObject()
   }
 })
 onMounted(() => {
   getWindows()
-  getBranches()
-  setInterval(() => {
-    getWindows()
-    getBranches()
-  }, 10000)
+  getServices()
+  // setInterval(() => {
+  //   getRoles()
+  // }, 3000)
 })
 </script>
 <template>
-  <div class="Window-container">
-    <div class="Window-title text-3xl text-center">Окна</div>
-    <div class="Window-body w-full">
+  <div class="role-container">
+    <div class="role-title text-3xl text-center">Роли</div>
+    <div class="role-body w-full">
       <div class="createDiv">
         <v-dialog v-model="isCreateActive" max-width="500">
           <template v-slot:activator="{ props: activatorProps }">
@@ -123,28 +153,35 @@ onMounted(() => {
               <v-card-text>
                 <form>
                   <div class="form-floating mb-3">
-                    <input v-model="WindowObject.name" type="text" class="form-control" id="floatingInput"
+                    <input v-model="windowObject.name" type="text" class="form-control" id="floatingInput"
                       placeholder="name@example.com" />
                     <label for="floatingInput">Название</label>
                   </div>
                   <div class="form-floating mb-3">
-                    <input v-model="WindowObject.number" type="text" class="form-control" id="floatingPassword"
-                      placeholder="Password" />
-                    <label for="floatingPassword">Номер</label>
-                  </div>
-                  <div class="form-floating mb-3">
-                    <input v-model="WindowObject.description" type="text" class="form-control" id="floatingPassword"
+                    <input v-model="windowObject.description" type="text" class="form-control" id="floatingPassword"
                       placeholder="Password" />
                     <label for="floatingPassword">Описание</label>
                   </div>
-
                   <div class="form-floating mb-3">
-                    <select v-model="WindowObject.branchId" class="form-select" aria-label="Default select example">
-                      <option value="null" selected>Выберите Отделение</option>
-                      <option :value="branch.id" v-for="branch in branches" :key="branch.id">
-                        {{ branch.name }}
+                    <input v-model="windowObject.priority" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
+                    <label for="floatingPassword">Приоритет</label>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <select class="form-select" aria-label="Default select example" v-model="selectedService"
+                      @change="selectServices()">
+                      <option value="null">Выберите услуги</option>
+                      <option v-for="service in services" :key="service.id" :value="service.id">
+                        {{ service.parentName + "/" + service.name }}
                       </option>
                     </select>
+                    <label for="floatingPassword">Услуги</label>
+                  </div>
+                  <div v-if="selectedServices" class="selects ">
+                    <div v-for="sel in selectedServices" :key="sel.id" class="select ">
+                      <div @click="deleteFromSelected(sel.id)" class="but"><i class="fas fa-times"></i></div>
+                      <div class="title">{{ sel.parentServiceName + "/" + sel.serviceName }}</div>
+                    </div>
                   </div>
                 </form>
               </v-card-text>
@@ -159,46 +196,104 @@ onMounted(() => {
           </template>
         </v-dialog>
       </div>
-      <v-card v-if="desserts" flat title="">
+      <!-- <v-card flat title="">
         <template v-slot:text>
-          <v-text-field v-model="search" label="Искать" prepend-inner-icon="mdi-magnify" single-line variant="outlined"
-            hide-details></v-text-field>
+          <v-text-field
+            v-model="search"
+            label="Искать"
+            prepend-inner-icon="mdi-magnify"
+            single-line
+            variant="outlined"
+            hide-details
+          ></v-text-field>
         </template>
 
-        <v-data-table :headers="headers" items-per-page-text="Элементов на странице" :items="desserts" :search="search"
-          no-data-text="Данные отсутствуют">
+        <v-data-table
+          :headers="headers"
+          items-per-page-text="Элементов на странице"
+          :items="desserts"
+          :search="search"
+          no-data-text="Данные отсутствуют"
+        >
           <template v-slot:item="{ item }">
             <tr>
               <td>
                 {{ item.id }}
               </td>
+
               <td>
                 {{ item.name }}
-              </td>
-              <td>
-                {{ item.number }}
-              </td>
-              <td>
-                {{ item.branchName }}
               </td>
               <td>
                 {{ item.description }}
               </td>
               <td>
-                <i v-if="item.active" class="fas fa-circle text-green-500"></i>
-                <i v-else class="fas fa-circle text-red-500"></i>
+                {{ item.priority }}
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="green" @click="show(item.id)">Изменить</v-btn>
+                <v-btn class="w-24" fab dark small color="red" @click="show(item.id)"
+                  >Изменить</v-btn
+                >
               </td>
               <td>
-                <v-btn class="w-24" fab dark small color="red" @click="deleteWindow(item.id)">Удалить</v-btn>
+                <v-btn class="w-24" fab dark small color="red" @click="deleteRole(item.id)"
+                  >Удалить</v-btn
+                >
               </td>
             </tr>
-            <!-- <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> -->
+             <v-btn class="w-24" fab dark small color="green"  @click="update(item.id)">Изменить</v-btn> 
           </template>
         </v-data-table>
-      </v-card>
+      </v-card> -->
+      <div class="roleServices">
+        <!-- <div class=roleService>
+            <div class="id">
+              ID
+            </div>
+            <div class="name">
+             Название
+            </div>
+            <div class="description">
+              Описание
+            </div>
+            <div class="priority">
+              Приоритет
+            </div>
+          </div> -->
+        <div v-for="roleService in desserts" :key="roleService.id" class="roleService">
+          <div class="static">
+            <div class="toggle" @click="roleService.show = !roleService.show">
+              <i class="fas fa-arrow-down"></i>
+
+            </div>
+            <div class="id">
+              {{ roleService.id }}
+            </div>
+            <div class="name">
+              {{ roleService.name }}
+            </div>
+            <div class="description">
+              {{ roleService.description }}
+            </div>
+            <div class="priority">
+              {{ roleService.priority }}
+            </div>
+            <div class="change">
+              <v-btn class="w-24" fab dark small color="green" @click="show(roleService.id)">Изменить</v-btn>
+            </div>
+            <div class="change">
+              <v-btn class="w-24" fab dark small color="red" @click="deleteRole(roleService.id)">Удалить</v-btn>
+            </div>
+          </div>
+          <div v-if="roleService.show" class="hidden-block">
+            <div v-for="rs in roleService.roleServices" :key="rs.id" class="hid text-center py-2 text-xl">
+              {{ rs.parentServiceName + "/" + rs.serviceName }}
+            </div>
+          </div>
+
+        </div>
+      </div>
+
     </div>
   </div>
 </template>
@@ -206,5 +301,75 @@ onMounted(() => {
 tr,
 td {
   text-align: center;
+}
+
+.selects {
+  width: 100%;
+  display: flex;
+  overflow-x: scroll;
+
+  .select {
+    cursor: pointer;
+    width: fit-content;
+    padding: 0.2rem;
+    margin: .3rem;
+    border-radius: .3rem;
+    color: white;
+    background-color: gray;
+    display: flex;
+
+    .title {
+      color: white;
+    }
+
+    .but {
+      cursor: pointer;
+    }
+
+  }
+}
+
+.roleServices {
+  margin: 1rem auto;
+  width: 100%;
+
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+
+  .roleService {
+    width: 100%;
+
+    background-color: rgb(245, 245, 245);
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+
+    .static {
+      width: 100%;
+      display: flex;
+      text-align: center;
+      justify-content: space-between;
+      align-content: center;
+
+      border-radius: .5rem;
+      font-size: 20px;
+
+      .toggle {
+        cursor: pointer;
+      }
+
+      div {
+        width: 100%;
+      }
+    }
+
+    .hidden-block {
+      .hid {
+        border: 1px solid black
+      }
+    }
+
+
+  }
+
 }
 </style>

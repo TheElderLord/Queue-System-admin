@@ -12,7 +12,7 @@ export const fetchWindows = async (): Promise<Window[]> => {
     throw error // Re-throw the error to handle it elsewhere if needed
   }
 }
-export const postWindow = async (WindowObject: Window) => {
+export const postWindow = async (WindowObject: Window | undefined | null) => {
   try {
     const response = await axios.post(WINDOWS_URL, WindowObject)
     return response.data
@@ -21,7 +21,7 @@ export const postWindow = async (WindowObject: Window) => {
     throw error // Re-throw the error to handle it elsewhere if needed
   }
 }
-export const putWindow = async (id: number, WindowObject: Window) => {
+export const putWindow = async (id: number | undefined | null, WindowObject: Window) => {
   try {
     const response = await axios.put(`${WINDOWS_URL}/${id}`, WindowObject)
     return response.data
@@ -30,7 +30,7 @@ export const putWindow = async (id: number, WindowObject: Window) => {
     throw error // Re-throw the error to handle it elsewhere if needed
   }
 }
-export const removeWindow = async (id: number) => {
+export const removeWindow = async (id: number | undefined | null) => {
   try {
     const response = await axios.delete(`${WINDOWS_URL}/${id}`)
     return response.data

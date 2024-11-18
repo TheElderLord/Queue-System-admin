@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import type { Service } from '@/models/services/services.interface';
+import type { Service } from '../models/services/services.interface';
 import type { RoleModel } from '../models/role/model.interface'
 import { fetchRoles, postRole, putRole, removeRole } from '../utils/role.utils'
 import { onMounted, ref, watch } from 'vue'
-import { fetchServices } from '@/utils/services.utils';
-import type { RoleService } from '@/models/role-services/role-service.interface';
-import { postRoleService } from '@/utils/role-services.utils';
+import { fetchServices } from '../utils/services.utils';
+import type { RoleService } from '../models/role-services/role-service.interface';
+import { postRoleService } from '../utils/role-services.utils';
 
-const search = ref('' as string)
-const headers = ref([
-  { key: 'id', title: 'ID', align: 'center' },
-  { key: 'name', title: 'Название', align: 'center' },
-  { key: 'description', title: 'Описание', align: 'center' },
-  { key: 'priority', title: 'Приоритет', align: 'center' },
-  { key: 'update', title: 'Изменить', align: 'center' },
-  { key: 'action', title: 'Действие', align: 'center' }
-])
+// const search = ref('' as string)
+// const headers = ref([
+//   { key: 'id', title: 'ID', align: 'center' },
+//   { key: 'name', title: 'Название', align: 'center' },
+//   { key: 'description', title: 'Описание', align: 'center' },
+//   { key: 'priority', title: 'Приоритет', align: 'center' },
+//   { key: 'update', title: 'Изменить', align: 'center' },
+//   { key: 'action', title: 'Действие', align: 'center' }
+// ])
 const desserts = ref([] as RoleModel[]);
 
 const services = ref([] as Service[])
