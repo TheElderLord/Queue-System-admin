@@ -22,7 +22,7 @@ export const postService = async (ServiceObject: Service) => {
     throw error // Re-throw the error to handle it elsewhere if needed
   }
 }
-export const putService = async (id: number, ServiceObject: Service) => {
+export const putService = async (id: number | undefined | null, ServiceObject: Service) => {
   try {
     const response = await axios.put(`${SERVICES_URL}/${id}`, ServiceObject)
     return response.data

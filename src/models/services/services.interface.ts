@@ -6,5 +6,7 @@ export interface Service {
   priority: number | undefined
   parentId: number | null | undefined
   maxServTime: number | null | undefined
-  maxWaitTime: number | null | undefined
+  maxWaitTime: number | null | undefined,
+  startRange: number | null | undefined,
+  endRange: number | null | undefined
 }

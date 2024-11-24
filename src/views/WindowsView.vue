@@ -2,7 +2,7 @@
 import type { Service } from '../models/services/services.interface';
 import type { Window } from '../models/windows/windows.interface'
 import { fetchWindows, postWindow, putWindow, removeWindow } from '../utils/windows.utils'
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { fetchServices } from '../utils/services.utils';
 import type { windowServiceModelDtos } from '../models/windows/window-service.interface';
 import { postWindowService } from '../utils/window-services.utils';
@@ -16,9 +16,9 @@ import { postWindowService } from '../utils/window-services.utils';
 //   { key: 'update', title: 'Изменить', align: 'center' },
 //   { key: 'action', title: 'Действие', align: 'center' }
 // ])
-const desserts = ref([] as Window[]);
+const desserts = ref([] as Window[] | null);
 
-const services = ref([] as Service[])
+const services = ref([] as Service[] | null)
 const selectedServices = ref([] as windowServiceModelDtos[]);
 
 const selectedService = ref(0 as number);
@@ -34,6 +34,7 @@ const windowObject = ref<Window>({
   name: null,
   description: null,
   active: false,
+  show: false,
   windowServiceModelDtos: [],
 })
 
@@ -57,7 +58,7 @@ const createWindow = async () => {
   await addServiceToWindow(role.id, selectedServices.value);
   await getWindows()
   isCreateActive.value = false
-  resetRoleObject()
+  resetWindow()
 }
 const show = async (id: number) => {
   const selectedRole = desserts.value.find((e) => e.id === id)
@@ -84,7 +85,7 @@ const updateWindow = async () => {
   await putWindow(windowObject.value.id, windowObject.value)
   await addServiceToWindow(windowObject.value.id, selectedServices.value)
   await getWindows()
-  resetRoleObject()
+  resetWindow()
   isCreateActive.value = false
   isUpdateActive.value = false
   // console.log(branchObject.value);
@@ -95,7 +96,7 @@ const deleteRole = async (id: number) => {
     await getWindows()
   }
 }
-const resetRoleObject = () => {
+const resetWindow = () => {
   windowObject.value = {
     id: 0,
     branchId: 0,
@@ -104,7 +105,8 @@ const resetRoleObject = () => {
     name: null,
     description: null,
     active: false,
-    windowServices: [],
+    show: false,
+    windowServiceModelDtos: [],
   }
 }
 const selectServices = () => {
@@ -133,7 +135,7 @@ const addServiceToWindow = async (id: number | null | undefined, services: windo
 }
 watch(isCreateActive, (newValue) => {
   if (!newValue) {
-    resetRoleObject()
+    resetWindow()
   }
 })
 onMounted(() => {
@@ -142,6 +144,11 @@ onMounted(() => {
   // setInterval(() => {
   //   getRoles()
   // }, 3000)
+})
+onUnmounted(() => {
+  desserts.value = null;
+  services.value = null;
+  resetWindow();
 })
 </script>
 <template>
@@ -266,6 +273,34 @@ onMounted(() => {
               Приоритет
             </div>
           </div> -->
+        <div class="roleService">
+          <div class="descr">
+            <div class="toggle">
+
+            </div>
+            <div class="id">
+              ID
+            </div>
+            <div class="name">
+              Название
+            </div>
+            <div class="description">
+              Описание
+            </div>
+            <div class="description">
+              Активен
+            </div>
+            <!-- <div class="priority">
+              {{ windowService.priority }}
+            </div> -->
+            <div class="change">
+              Изменить
+            </div>
+            <div class="change">
+              Удалить
+            </div>
+          </div>
+        </div>
         <div v-for="windowService in desserts" :key="windowService.id" class="roleService">
           <div class="static">
             <div class="toggle" @click="windowService.show = !windowService.show">
@@ -281,6 +316,10 @@ onMounted(() => {
             <div class="description">
               {{ windowService.description }}
             </div>
+            <div class="description">
+              <i v-if="windowService.active" class="fas fa-circle text-green-500"></i>
+              <i v-else class="fas fa-circle text-red-500"></i>
+            </div>
             <!-- <div class="priority">
               {{ windowService.priority }}
             </div> -->
@@ -292,7 +331,7 @@ onMounted(() => {
             </div>
           </div>
           <div v-if="windowService.show" class="hidden-block">
-            <div v-for="rs in windowService.windowServices" :key="rs.id" class="hid text-center py-2 text-xl">
+            <div v-for="rs in windowService.windowServiceModelDtos" :key="rs.id" class="hid text-center py-2 text-xl">
               {{ rs.serviceName }}
             </div>
           </div>
@@ -346,18 +385,38 @@ td {
   .roleService {
     width: 100%;
 
-    background-color: rgb(245, 245, 245);
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-
     .static {
+
+      box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
       width: 100%;
       display: flex;
       text-align: center;
       justify-content: space-between;
       align-content: center;
 
-      border-radius: .5rem;
+      border-radius: 1rem;
       font-size: 20px;
+      padding: 1.2rem;
+
+      .toggle {
+        cursor: pointer;
+      }
+
+      div {
+        width: 100%;
+      }
+    }
+
+    .descr {
+      width: 100%;
+      display: flex;
+      text-align: center;
+      justify-content: space-between;
+      align-content: center;
+
+      border-radius: 1rem;
+      font-size: 20px;
+      padding: 1rem;
 
       .toggle {
         cursor: pointer;
@@ -370,7 +429,10 @@ td {
 
     .hidden-block {
       .hid {
-        border: 1px solid black
+        border-radius: 1rem;
+        margin: 1rem auto;
+        box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+        padding: 1.2rem auto;
       }
     }
 

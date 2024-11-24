@@ -12,6 +12,8 @@ const headers = ref([
   { key: 'maxWaitTime', title: 'Максимальное время ожидания', align: 'center' },
   { key: 'maxServTime', title: 'Максимальное время обслуживания', align: 'center' },
   { key: 'priority', title: 'Приоритет', align: 'center' },
+  { key: 'startRange', title: 'Диапазон(начало)', align: 'center' },
+  { key: 'endRange', title: 'Диапазон(конец)', align: 'center' },
   { key: 'action', title: 'Изменить', align: 'center' },
   { key: 'action', title: 'Действие', align: 'center' }
 ])
@@ -27,7 +29,9 @@ const serviceObject = ref<Service>({
   priority: 0,
   parentId: null,
   maxServTime: null,
-  maxWaitTime: null
+  maxWaitTime: null,
+  startRange: null,
+  endRange: null
 })
 
 const getServices = async () => {
@@ -45,11 +49,11 @@ const createService = async () => {
   resetServiceObject()
 }
 const show = async (id: number) => {
-  const selectedRole = desserts.value.find((e) => e.id === id)
+  const selectedService = desserts.value.find((e) => e.id === id)
   // Check if the selected branch is defined
-  if (selectedRole) {
+  if (selectedService) {
     // Assign the found branch to branchObject
-    serviceObject.value = { ...selectedRole }
+    serviceObject.value = { ...selectedService }
     serviceObject.value.id = id
     isCreateActive.value = true
     isUpdateActive.value = true
@@ -86,7 +90,9 @@ const resetServiceObject = () => {
     priority: 0,
     parentId: null,
     maxServTime: null,
-    maxWaitTime: null
+    maxWaitTime: null,
+    startRange: null,
+    endRange: null
   }
 }
 watch(isCreateActive, (newValue) => {
@@ -191,6 +197,12 @@ onMounted(() => {
               </td>
               <td>
                 {{ item.priority }}
+              </td>
+              <td>
+                {{ item.startRange }}
+              </td>
+              <td>
+                {{ item.endRange }}
               </td>
               <td>
                 <v-btn class="w-24" fab dark small color="red" @click="show(item.id)">Изменить</v-btn>
