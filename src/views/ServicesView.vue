@@ -154,6 +154,16 @@ onMounted(() => {
                       placeholder="Password" />
                     <label for="floatingPassword">Приоритет</label>
                   </div>
+                  <div class="form-floating mb-3">
+                    <input v-model="serviceObject.startRange" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
+                    <label for="floatingPassword">Диапазон(начало)</label>
+                  </div>
+                  <div class="form-floating mb-3">
+                    <input v-model="serviceObject.endRange" type="text" class="form-control" id="floatingPassword"
+                      placeholder="Password" />
+                    <label for="floatingPassword">Диапазон(конец)</label>
+                  </div>
                 </form>
               </v-card-text>
 
