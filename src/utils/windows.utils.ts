@@ -39,3 +39,12 @@ export const removeWindow = async (id: number | undefined | null) => {
     throw error // Re-throw the error to handle it elsewhere if needed
   }
 }
+export const deactiveWindow = async (id: number | undefined | null) => {
+  try {
+    const response = await axios.put(`${WINDOWS_URL}/disable/${id}`)
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching Windows:', error)
+    throw error // Re-throw the error to handle it elsewhere if needed
+  }
+}

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { Service } from '../models/services/services.interface';
 import type { Window } from '../models/windows/windows.interface'
-import { fetchWindows, postWindow, putWindow, removeWindow } from '../utils/windows.utils'
+import { deactiveWindow, fetchWindows, postWindow, putWindow, removeWindow } from '../utils/windows.utils'
 import { onMounted, onUnmounted, ref, watch } from 'vue'
 import { fetchServices } from '../utils/services.utils';
 import type { windowServiceModelDtos } from '../models/windows/window-service.interface';
@@ -90,9 +90,15 @@ const updateWindow = async () => {
   isUpdateActive.value = false
   // console.log(branchObject.value);
 }
-const deleteRole = async (id: number) => {
+const deleteWindow = async (id: number) => {
   if (confirm("Вы уверены в своих действиях?")) {
     await removeWindow(id)
+    await getWindows()
+  }
+}
+const deactive = async (id: number) => {
+  if (confirm("Вы уверены в своих действиях?")) {
+    await deactiveWindow(id)
     await getWindows()
   }
 }
@@ -294,6 +300,9 @@ onUnmounted(() => {
               {{ windowService.priority }}
             </div> -->
             <div class="change">
+              Завершить
+            </div>
+            <div class="change">
               Изменить
             </div>
             <div class="change">
@@ -324,10 +333,13 @@ onUnmounted(() => {
               {{ windowService.priority }}
             </div> -->
             <div class="change">
+              <v-btn class="w-28" fab dark small color="green" @click="deactive(windowService.id)">Завершить</v-btn>
+            </div>
+            <div class="change">
               <v-btn class="w-24" fab dark small color="green" @click="show(windowService.id)">Изменить</v-btn>
             </div>
             <div class="change">
-              <v-btn class="w-24" fab dark small color="red" @click="deleteRole(windowService.id)">Удалить</v-btn>
+              <v-btn class="w-24" fab dark small color="red" @click="deleteWindow(windowService.id)">Удалить</v-btn>
             </div>
           </div>
           <div v-if="windowService.show" class="hidden-block">
