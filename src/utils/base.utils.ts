@@ -12,3 +12,4 @@ export const OPERATORS_URL = `${BASE_URL}/operators`
 export const WINDOWS_URL = `${BASE_URL}/windows`
 export const SESSION_URL = `${BASE_URL}/sessions`
 export const TICKETS_URL = `${BASE_URL}/tickets`
+export const TIMEOUT_URL = `${BASE_URL}/timeout`

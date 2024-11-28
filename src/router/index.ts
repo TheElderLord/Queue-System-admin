@@ -8,6 +8,8 @@ import TicketsView from '@/views/TicketsView.vue'
 import BranchesView from '@/views/BranchesView.vue'
 import ServicesView from '@/views/ServicesView.vue'
 import BindedServicesView from '@/views/BindedServicesView.vue'
+import TicketStatusTimeOut from '@/views/TicketStatusTimeOut.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -56,6 +58,11 @@ const router = createRouter({
       path: '/role-services',
       name: 'role-services',
       component: BindedServicesView
+    },
+    {
+      path: '/timeout',
+      name: 'timeout',
+      component: TicketStatusTimeOut
     }
   ]
 })
