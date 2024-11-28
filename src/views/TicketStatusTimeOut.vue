@@ -162,6 +162,7 @@ onMounted(() => {
                                               {{ status.translate }}
                                             </option>
                                           </select>
+                                          <label for="floatingPassword">Выберите в статус</label>
                                     </div>
                                     <div class="form-floating mb-3">
                                         <input v-model="ticketStatusObject.hour" type="text" class="form-control"
@@ -175,6 +176,7 @@ onMounted(() => {
                                               {{ status.translate }}
                                             </option>
                                           </select>
+                                          <label for="floatingPassword">Выберите в статус</label>
                                     </div>
                                    
                                 </form>
