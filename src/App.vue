@@ -57,6 +57,12 @@ const links: SideBarLink[] = [
     name: 'Билеты',
     link: '/tickets',
     icon: 'fas fa-ticket-alt'
+  },
+  {
+    id: 10,
+    name: 'Статус билетов',
+    link: '/timeout',
+    icon: 'fas fa-ticket-alt'
   }
 ]
 </script>
