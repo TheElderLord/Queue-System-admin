@@ -2,8 +2,8 @@
 import type { Operator } from '../models/operators/operator.inteface'
 import { onMounted, ref, watch } from 'vue'
 import { fetchOperators, postOperator, putOperator, removeOperator } from '../utils/operators.utils'
-import type { RoleModel } from '@/models/role/model.interface'
-import { fetchRoles } from '@/utils/role.utils'
+import type { RoleModel } from '../models/role/model.interface'
+import { fetchRoles } from '../utils/role.utils'
 
 const search = ref('' as string)
 const isCreateActive = ref<boolean>(false)
@@ -15,7 +15,7 @@ const operatorObject = ref<Operator>({
   lastname: '',
   login: '',
   password: '',
-  roleId: 0,
+  // roleId: 0,
   roleName: '',
   active: false
 })
@@ -24,7 +24,7 @@ const headers = ref([
   { key: 'id', title: 'ID', align: 'center' },
   { key: 'name', title: 'Имя', align: 'center' },
   { key: 'lastname', title: 'Фамилия', align: 'center' },
-  { key: 'roleName', title: 'Роль', align: 'center' },
+  // { key: 'roleName', title: 'Роль', align: 'center' },
   { key: 'active', title: 'Активен', align: 'center' },
   { key: 'update', title: 'Изменить', align: 'center' },
   { key: 'action', title: 'Удалить', align: 'center' }
@@ -46,8 +46,8 @@ const isValidOperatorForm = (): boolean => {
     !!operatorObject.value.name &&
     !!operatorObject.value.lastname &&
     !!operatorObject.value.login &&
-    !!operatorObject.value.password &&
-    operatorObject.value.roleId !== 0
+    !!operatorObject.value.password
+    // operatorObject.value.roleId !== 0
   )
 }
 
@@ -56,8 +56,8 @@ const createOperator = async () => {
     !operatorObject.value.name ||
     !operatorObject.value.lastname ||
     !operatorObject.value.login ||
-    !operatorObject.value.password ||
-    operatorObject.value.roleId === 0
+    !operatorObject.value.password
+    // operatorObject.value.roleId === 0
   ) {
     alert('Пожалуйста, заполните все обязательные поля и выберите роль.')
     return
@@ -91,8 +91,8 @@ const updateOperator = async () => {
     !operatorObject.value.name ||
     !operatorObject.value.lastname ||
     !operatorObject.value.login ||
-    !operatorObject.value.password ||
-    operatorObject.value.roleId === 0
+    !operatorObject.value.password
+    // operatorObject.value.roleId === 0
   ) {
     alert('Пожалуйста, заполните все обязательные поля и выберите роль.')
     return
@@ -120,7 +120,7 @@ const resetOperatorObject = () => {
     lastname: '',
     login: '',
     password: '',
-    roleId: 0,
+    // roleId: 0,
     roleName: '',
     active: false
   }
@@ -176,14 +176,14 @@ onMounted(() => {
                       placeholder="Password" />
                     <label for="floatingPassword">Пароль</label>
                   </div>
-                  <div class="form-floating mb-3">
+                  <!-- <div class="form-floating mb-3">
                     <select v-model="operatorObject.roleId" class="form-select" aria-label="Default select example">
                       <option value="null"  selected>Выберите роль</option>
                       <option :value="role.id" v-for="role in roles" :key="role.id">
                         {{ role.name }}
                       </option>
                     </select>
-                  </div>
+                  </div> -->
                 </form>
               </v-card-text>
 

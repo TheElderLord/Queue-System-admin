@@ -4,7 +4,7 @@ export interface Operator {
   lastname: string
   login: string
   password: string
-  roleId: number
+  // roleId: number
   roleName: string
   active: boolean
 }
