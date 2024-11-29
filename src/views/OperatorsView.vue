@@ -211,7 +211,7 @@ onMounted(() => {
               <td>{{ item.id }}</td>
               <td>{{ item.name }}</td>
               <td>{{ item.lastname }}</td>
-              <td>{{ item.roleName }}</td>
+              <!-- <td>{{ item.roleName }}</td> -->
               <td>
                 <i v-if="item.active" class="fas fa-circle text-green-500"></i>
                 <i v-else class="fas fa-circle text-red-500"></i>
